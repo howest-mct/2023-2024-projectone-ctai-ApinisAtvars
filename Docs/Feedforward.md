@@ -32,17 +32,25 @@
 
 # Feedforward Conversations
 
-## Conversation 1 (Date: xx/xx/2024)
+## Conversation 1 (Date: 23/05/2024)
 
-Lecturer:
+Lecturer: Marie Dewitte
 
 Questions for this conversation:
 
-- Question 1: V
+- Question 1: How do I collect the data? 20% of it needs to be collected by me, how do I do that?
+
+- Question 2: How do I classify whether a person is walking in or out? 2 classes, one facing the camera and one not?
+
+- Question 3: How do I gauge accuracy? Percentage of people actually in the room or whether it's correct or not?
 
 This is the feedback on my questions.
 
-- Feedback 1: G
+- Feedback 1: Hang a camera on top of the entrance of the classroom and take a video.
+
+- Feedback 2: Using 2 counters for going in and going out. List with a number for people who are inside the classroom and add/deduct people. Be careful: angle! First: person   detector, then adding counters.
+
+- Feedback 3: Accuracy can be gauged by judging whether a person was correctly identified. Accuracy score of >= 90% is good enough for this project.
 
 ## Conversation 2 (Date: xx/xx/2024)
 
