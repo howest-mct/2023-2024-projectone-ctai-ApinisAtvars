@@ -48,7 +48,7 @@ This is the feedback on my questions.
 
 - Feedback 1: Hang a camera on top of the entrance of the classroom and take a video.
 
-- Feedback 2: Using 2 counters for going in and going out. List with a number for people who are inside the classroom and add/deduct people. Be careful: angle! First: person   detector, then adding counters.
+- Feedback 2: Using 2 counters for going in and going out. List with a number for people who are inside the classroom and add/deduct people. Be careful: angle! You should be able to see the whole classroom in the picture. First: person detector, then adding counters.
 
 - Feedback 3: Accuracy can be gauged by judging whether a person was correctly identified. Accuracy score of >= 90% is good enough for this project.
 
