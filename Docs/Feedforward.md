@@ -1,12 +1,12 @@
 # Project Information
 
-**FIRST NAME LAST NAME:** A B
+**FIRST NAME LAST NAME:** Atvars Apinis
 
-**Sparring Partner:** C D
+**Sparring Partner:** Viola Nguyen
 
-**Project Summary in max 10 words:** E
+**Project Summary in max 10 words:** AI that can distinguish between people walking in or out.
 
-**Project Title:** F
+**Project Title:** AI Powered Classroom Occupation Meter
 
 # Tips for Feedback Conversations
 
