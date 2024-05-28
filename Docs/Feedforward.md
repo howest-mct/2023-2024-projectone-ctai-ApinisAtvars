@@ -52,13 +52,23 @@ This is the feedback on my questions.
 
 - Feedback 3: Accuracy can be gauged by judging whether a person was correctly identified. Accuracy score of >= 90% is good enough for this project.
 
-## Conversation 2 (Date: xx/xx/2024)
+## Conversation 2 (Date: 29/05/2024)
 
-Lecturer:
+Lecturer: Marie Dewitte
 
 Questions for this conversation:
 
-- Question 1: V
+- Question 1: Should I have a database for this project?
+
+- Question 2: How do I make the model in Google Colab use imported weights from a previous training run?
+
+- Question 3: Is it normal to lose all of my data after I run out of computing credits? How do I get it back/can I do that?
+
+- Question 4: Where do I see the remaining computing credits for the day?
+
+- Question 5: Can I delete my Roboflow project if I have it downloaded, and I want to annotate more data?
+
+- Question 6: Which SDK data annotation tools to use and how do import labels with them?
 
 This is the feedback on my questions.
 
