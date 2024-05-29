@@ -60,19 +60,38 @@ Questions for this conversation:
 
 - Question 1: Should I have a database for this project?
 
-- Question 2: How do I make the model in Google Colab use imported weights from a previous training run?
+- Question 2: Is it normal to lose all of my data after I run out of computing credits? How do I get it back/can I do that?
 
-- Question 3: Is it normal to lose all of my data after I run out of computing credits? How do I get it back/can I do that?
+- Question 3: Where do I see how much computing time I have left for the day?
 
-- Question 4: Where do I see the remaining computing credits for the day?
+- Question 4: Can I delete my Roboflow project if I have it downloaded, and I want to annotate more data?
 
-- Question 5: Can I delete my Roboflow project if I have it downloaded, and I want to annotate more data?
+- Question 5: (If the answer to the first question is no) Which data annotation tools to use and how do import labels with them?
 
-- Question 6: Which SDK data annotation tools to use and how do import labels with them?
+- Question 6: If I want to have real-time detection, is the nano architecture the only viable option, or could I move it up to small, or medium?
+
+- Question 7: How do I make YOLO run on my GPU? Will that be faster than it running on my CPU?
+
+- Question 8: How do I make the model in Google Colab use imported weights from a previous training run?
+
 
 This is the feedback on my questions.
 
-- Feedback 1: G
+- Feedback 1: No, it's not necessary. It's nice to have it, the same as frontend for the application with Gradion Python.
+
+- Feedback 2: You can't get it back after the session ends. When you are done training your model, you need to get the weights out ASAP.
+
+- Feedback 3: I will look into that.
+
+- Feedback 4: No, it's better to create a new account.
+
+- Feedback 5: (I didn't ask this question)
+
+- Feedback 6: The time needed to make predictions is around the same, however, the larger architectures will need more time to train.
+
+- Feedback 7: I will look into that.
+
+- Feedback 8: It needs to be able to get from your Google Colab environment as it is just a container. Mount your drive and store stuff there.
 
 ## Conversation 3 (Date: xx/xx/2024)
 
