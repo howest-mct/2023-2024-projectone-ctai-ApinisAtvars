@@ -41,7 +41,8 @@ while True:
     ret, img= cap.read()
     overlay = img.copy()
 
-    cv2.line(img, start_counter_line, end_counter_line, (0,0,255), 12)
+    #Draw the counter line
+    cv2.line(img, start_counter_line, end_counter_line, (0,0,255), 6)
 
     #Makes the line transparent
     img = cv2.addWeighted(overlay, 0.5, img, 0.5, 0)
@@ -94,18 +95,6 @@ while True:
             cv2.circle(img, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
             #Check if point is above counter line and between its endpoints
-            
-
-            # if len(previous_centroid_coords) != 0:
-            #     for centroidId, coords in previous_centroid_coords:
-            #         if centroid[0] > start_counter_line[0] and centroid[0] < end_counter_line[0]: # If it's between the line's endpoints
-            #             if centroid[1] < end_counter_line[1] and coords[1] > end_counter_line[1]: #If it's above the line and didn't use to be
-            #                 number_of_people += 1
-            #             else:
-            #                 if centroid[1] > end_counter_line[1] and coords[1] < end_counter_line[1]: #If it's below the line and didn't use to be
-            #                     if number_of_people!=0:
-            #                         number_of_people-=1
-
             try:
                 if centroid[0] > start_counter_line[0] and centroid[0] < end_counter_line[0]: # If it's between the line's endpoints
                     if centroid[1] < end_counter_line[1] and previous_centroid_coords[objectID][1] > end_counter_line[1]: #If it's above the line and didn't use to be
@@ -122,7 +111,7 @@ while True:
 
         all_box_coords = []
 
-
+    # Display the amount of people
     cv2.putText(img, "People: {}".format(str(number_of_people)), (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 2)
 
     #Show the image
