@@ -77,7 +77,7 @@ Questions for this conversation:
 
 This is the feedback on my questions.
 
-- Feedback 1: No, it's not necessary. It's nice to have it, the same as frontend for the application with Gradion Python.
+- Feedback 1: No, it's not necessary. It's nice to have it, the same as frontend for the application with Gradio Python.
 
 - Feedback 2: You can't get it back after the session ends. When you are done training your model, you need to get the weights out ASAP.
 
