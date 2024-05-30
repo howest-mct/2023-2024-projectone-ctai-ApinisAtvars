@@ -1,7 +1,7 @@
 task: detect
 mode: train
-model: yolov8s.yaml
-data: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\First_model_test\Classroom-Occupation-Meter-7\data.yaml
+model: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train4\weights\best.pt
+data: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\First_model_test\Classroom-Occupation-Meter-2-2\data.yaml
 epochs: 20
 time: null
 patience: 100

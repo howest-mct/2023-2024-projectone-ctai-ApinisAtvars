@@ -7,7 +7,9 @@ from models.head_tracker import HeadTracker
 
 
 #Import the model
-model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train9\weights/best.pt")
+
+    #Small model
+model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train9_small_model_cuda\weights/best.pt")
 
 #Define class names (I have only 1 class)
 class_names = ["head"]
