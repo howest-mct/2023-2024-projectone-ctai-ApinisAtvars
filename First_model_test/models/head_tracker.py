@@ -4,7 +4,7 @@ from collections import OrderedDict
 import numpy as np
 
 class HeadTracker():
-    def __init__(self, maxDisappeared=50):
+    def __init__(self, maxDisappeared=24):
         
         #Counter used to assign new IDs to objects
         self.nextObjectID = 0
