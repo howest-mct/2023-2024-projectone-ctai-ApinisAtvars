@@ -69,24 +69,16 @@ def handle_client(sock, shutdown_flag):
 
 
 import io
-import numpy as np
-
-def encode_numpy_array_to_binary(array):
-    memfile = io.BytesIO()
-    np.save(memfile, array)
-    memfile.seek(0)
-    return memfile.read()
-
-def decode_numpy_array_from_binary(binary_data):
-    memfile = io.BytesIO(binary_data)
-    memfile.seek(0)
-    return np.load(memfile)
 
 ###### MAIN PART ######
 
 import cv2
+import base64
 
 capture = cv2.VideoCapture(0)
+
+capture.set(3, 640)
+capture.set(4, 640)
 
 try:
     setup_GPIO()
@@ -94,12 +86,18 @@ try:
     while True:
         ret, frame = capture.read()
 
+                # Convert captured image to JPG
+        retval, buffer = cv2.imencode('.jpg', frame)
+
+        # Convert to base64 encoding
+        jpg_as_text = base64.b64encode(buffer)
+
         if cv2.waitKey(1) & 0xFF == ord('q'): 
             break
         # If you want to send data to AI script / notebook from here
         if client_socket:
             try:
-                client_socket.sendall(frame.encode())
+                client_socket.sendall(jpg_as_text)
             except Exception as e:
                 print(f"Failed to send message: {e}")
 
