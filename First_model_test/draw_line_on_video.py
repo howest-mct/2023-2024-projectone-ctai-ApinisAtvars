@@ -5,7 +5,7 @@ import numpy as np
 def mb_click(event,x,y,flags,param):
     global ix,iy
 
-    
+    print(event)
 
     if event == cv2.EVENT_LBUTTONDOWN: #It starts at true
         cv2.EVENT_FLAG_LBUTTON = not cv2.EVENT_FLAG_LBUTTON #I invert it

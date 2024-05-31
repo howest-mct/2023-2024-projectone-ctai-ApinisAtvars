@@ -107,6 +107,16 @@ Questions for this conversation:
 
 - Question 4: My model will be running from my laptop, but the video feed will be coming from the raspi, could I somehow get the frames from the window that opens up when I do X11 forwarding, so that I can make predictions with my model on them?
 
+- Question 5: Show him the line demo. If I press the mouse button for the first time, can I be able to draw a line from that position to the current mouse position, and then fix it when I press the mouse again?
+
 This is the feedback on my questions.
 
-- Feedback 1: G
+- Feedback 1: You can send each frame encoded using Base64 encoding.
+
+- Feedback 2: No, there will not be flickering.
+
+- Feedback 3: Yes, it should work from there, even on Windows.
+
+- Feedback 4: You could take screenshots from the window, but it's easier either to transfer the frames directly, or record from the laptop.
+
+- Feedback 5: Yes, check the cv2.EVENT_MOUSEMOVE. Use it in the left mouse button callback function.
