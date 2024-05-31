@@ -93,13 +93,19 @@ This is the feedback on my questions.
 
 - Feedback 8: It needs to be able to get from your Google Colab environment as it is just a container. Mount your drive and store stuff there.
 
-## Conversation 3 (Date: xx/xx/2024)
+## Conversation 3 (Date: 31/05/2024)
 
-Lecturer:
+Lecturer: Pieter-Jan Beeckman
 
 Questions for this conversation:
 
-- [x] Question 1: V
+- Question 1: Is the demo You showed us yesterday meant to send camera feed? If not, how could I send video feed to my laptop?
+
+- Question 2: If I send the video through Ethernet to my laptop, will there be flickering?
+
+- Question 3: I have gotten the X11 forwarding to work in PuTTY, but can I get it to work from the VS Code terminal?
+
+- Question 4: My model will be running from my laptop, but the video feed will be coming from the raspi, could I somehow get the frames from the window that opens up when I do X11 forwarding, so that I can make predictions with my model on them?
 
 This is the feedback on my questions.
 

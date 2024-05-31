@@ -47,8 +47,15 @@ def receive_messages(sock, shutdown_flag):
 #TODO                                       WHAT IS THIS?!?!?!?
 
 import numpy as np
+import io
+
+def decode_numpy_array_from_binary(binary_data):
+    memfile = io.BytesIO(binary_data)
+    memfile.seek(0)
+    return np.load(memfile)
 
 frame = np.zeros((640,640,3), np.uint8)
+
 def receive_frame(sock, shutdown_flag):
     global frame
 
@@ -60,7 +67,7 @@ def receive_frame(sock, shutdown_flag):
                 if not data: # when no data is received, try again (and shutdown flag is checked again)
                     break
 
-                data = data.decode() #Decode the frame sent by raspi
+                data = decode_numpy_array_from_binary(data) #Decode the frame sent by raspi
                 frame = data #Return this frame
             
             except socket.timeout: # when no data comes within timeout, try again
@@ -88,7 +95,7 @@ def main():
 
     try:
         while True: # random loop for other things
-            # cv2.imshow("Raspi camera", frame)
+            cv2.imshow("Raspi camera", frame)
             print(frame)
     except KeyboardInterrupt:
         print("Client disconnecting...")
