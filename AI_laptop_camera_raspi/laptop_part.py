@@ -19,8 +19,8 @@ def setup_socket_client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # create a socket instance
     client_socket.connect(server_address) # connect to specified server
     print("Connected to server")
-
-    receive_thread = threading.Thread(target=receive_messages, args=(client_socket, shutdown_flag))
+#                                           Change to receive_messages for it to work again
+    receive_thread = threading.Thread(target=receive_frame, args=(client_socket, shutdown_flag))
     receive_thread.start()
 
 def receive_messages(sock, shutdown_flag):
@@ -45,7 +45,13 @@ def receive_messages(sock, shutdown_flag):
         sock.close()
 
 #TODO                                       WHAT IS THIS?!?!?!?
+
+import numpy as np
+
+frame = np.zeros((640,640,3), np.uint8)
 def receive_frame(sock, shutdown_flag):
+    global frame
+
     sock.settimeout(1)  # Set a timeout on the socket so when can check shutdown_flag.is_set in the loop, instead of blocking
     try:
         while not shutdown_flag.is_set(): # as long as ctrl+c is not pressed
@@ -55,7 +61,7 @@ def receive_frame(sock, shutdown_flag):
                     break
 
                 data = data.decode() #Decode the frame sent by raspi
-                return data #Return this frame
+                frame = data #Return this frame
             
             except socket.timeout: # when no data comes within timeout, try again
                 continue
@@ -64,6 +70,8 @@ def receive_frame(sock, shutdown_flag):
             print(f"Connection error: {e}")
     finally:
         sock.close()
+
+import cv2
 
 def main():
     global client_socket, receive_thread
@@ -80,8 +88,8 @@ def main():
 
     try:
         while True: # random loop for other things
-            time.sleep(6)
-            print("doing other things...")
+            # cv2.imshow("Raspi camera", frame)
+            print(frame)
     except KeyboardInterrupt:
         print("Client disconnecting...")
         shutdown_flag.set()
