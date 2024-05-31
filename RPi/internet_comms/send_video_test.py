@@ -68,6 +68,20 @@ def handle_client(sock, shutdown_flag):
         sock.close()
 
 
+import io
+import numpy as np
+
+def encode_numpy_array_to_binary(array):
+    memfile = io.BytesIO()
+    np.save(memfile, array)
+    memfile.seek(0)
+    return memfile.read()
+
+def decode_numpy_array_from_binary(binary_data):
+    memfile = io.BytesIO(binary_data)
+    memfile.seek(0)
+    return np.load(memfile)
+
 ###### MAIN PART ######
 
 import cv2
@@ -99,3 +113,4 @@ finally:
     
     capture.release()
     cv2.destroyAllWindows()
+    
