@@ -1,3 +1,6 @@
+import gradio as gr
+import numpy as np
+
 import cv2
 import math
 from ultralytics import YOLO
@@ -12,36 +15,8 @@ from models.head_tracker import HeadTracker
 
 from models.client import LaptopClient
 
-lc = LaptopClient()
-
-#Import the model
-
-#Medium model
-model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train2_medium_new_dataset\weights\best.pt")
-
-#Start video capture
-cap = cv2.VideoCapture(0)
-
-#Define the length and height of video capture
-# cap.set(3, 1920)
-# cap.set(4, 1080)
-
-#Initialize a HeadTracker object
-ht = HeadTracker()
-
-number_of_people = 0
-previous_number_of_people = -1
-
-all_box_coords = []
-previous_centroid_coords = {}
-
-start_counter_line = []
-end_counter_line = []
-counter_line_middle_point = -1 #Mean height of counter line
-counter_line_is_drawn = 0
 
 
-#method to write to .csv file
 def write_to_csv(number_of_people):
     filename = "D:/Project 1/2023-2024-projectone-ctai-ApinisAtvars/Sending_data_to_RPi/Files/{}.csv".format(time.strftime("%Y-%m-%d"))
     #If a file like this^ exists, a header is not written
@@ -57,53 +32,30 @@ def write_to_csv(number_of_people):
             writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
 
 
-# Callback method for left mouse button
-def mb_click(event,x,y,flags,param):
-    global start_counter_line, end_counter_line, counter_line_is_drawn, counter_line_middle_point
-
-    
-    if counter_line_is_drawn == 0:
-        if event == cv2.EVENT_LBUTTONDOWN: #It starts at true
-            cv2.EVENT_FLAG_LBUTTON = not cv2.EVENT_FLAG_LBUTTON #I invert it
-            if cv2.EVENT_FLAG_LBUTTON == 1: # If it's at 1
-                end_counter_line.append(x) #These need to be in global variables, because in the main code
-                end_counter_line.append(y) #I use the line end positions to perform people counting
-                counter_line_is_drawn = 1 # Set the counter line drawn flag, so that you can only have one counter line
-                counter_line_middle_point = (start_counter_line[1]+end_counter_line[1])/2
 
 
-            else: 
-                start_counter_line.append(x)
-                start_counter_line.append(y) # Else, I store the coords of this cursor position
 
-            print(cv2.EVENT_FLAG_LBUTTON) # The first printed event is false
+def predict(img):
+    lc = LaptopClient()
 
+    model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train2_medium_new_dataset\weights\best.pt")
 
-# Set the callback function
-cv2.namedWindow("Webcam")
-cv2.setMouseCallback("Webcam", mb_click)
+    ht = HeadTracker()
 
+    number_of_people = 0
+    previous_number_of_people = -1
 
-lc.setup_socket_client()
+    all_box_coords = []
+    previous_centroid_coords = {}
 
-while True:
-    #Get frame
-    ret, img= cap.read()
-    overlay = img.copy()
+    start_counter_line = []
+    end_counter_line = []
+    counter_line_middle_point = -1 #Mean height of counter line
+    counter_line_is_drawn = 0
 
-    # #Draw the counter line
-    # cv2.line(img, start_counter_line, end_counter_line, (0,0,255), 6)
-
-    #Makes the line transparent
-    # img = cv2.addWeighted(overlay, 0.5, img, 0.5, 0)
-
-    #Make prediction on the frame
-    # results = model(img)
-    results = model.predict(img, stream=True, iou=0.5)
-
+    results = model(img)
     for result in results:
         boxes = result.boxes
-
 
         for box in boxes:
             # Get bounding box coordinates
@@ -177,16 +129,12 @@ while True:
     #Show the image
     cv2.imshow("Webcam", img)
 
-    #If Q is pressed, end the video streaming
-    if cv2.waitKey(1) == ord('q'):
-        lc.shutdown_flag.set()
-        lc.client_socket.close()
-        lc.receive_thread.join()
-        print("Client stopped gracefully")
-        break
+    return img
 
-
-
-#Clear up everything
-cap.release()
-cv2.destroyAllWindows()
+demo = gr.Interface(
+    predict, 
+    gr.Image(sources=["webcam"], streaming=True), 
+    "image",
+    live=True
+)
+demo.launch()
