@@ -120,3 +120,7 @@ This is the feedback on my questions.
 - Feedback 4: You could take screenshots from the window, but it's easier either to transfer the frames directly, or record from the laptop.
 
 - Feedback 5: Yes, check the cv2.EVENT_MOUSEMOVE. Use it in the left mouse button callback function.
+
+## FeedForward 2 (04/06/2024)
+
+- Feedback 1: Even if you are training a model, you should log the hours in as "Code", otherwise we cannot see them.
