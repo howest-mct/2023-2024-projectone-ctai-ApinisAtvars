@@ -64,7 +64,7 @@ def handle_client(sock, shutdown_flag):
         while not shutdown_flag.is_set(): # as long as ctrl+c is not pressed
             data = sock.recv(2) # try to receive 16 bytes
             if not data: # when no data is received, try again (and shutdown flag is checked again)
-                print("No data received")
+                # print("No data received")
                 continue # go back to top
             people_number = data.decode()
             print("Received from client:", people_number) # print the received data, or do something with it

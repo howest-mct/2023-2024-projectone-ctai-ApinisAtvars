@@ -106,3 +106,4 @@ class LCD():
         lcd.display_text(" o", lcd.LCD_LINE_2)
         time.sleep(1)
         lcd.clear_display()
+        lcd.send_instruction(0b0000)
