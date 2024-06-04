@@ -19,12 +19,14 @@ lc = LaptopClient()
 #Medium model
 model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train2_medium_new_dataset\weights\best.pt")
 
+# stream_url = 'rtsp://192.168.168.167:8554/live.sdp'
+
 #Start video capture
 cap = cv2.VideoCapture(0)
 
 #Define the length and height of video capture
-# cap.set(3, 1920)
-# cap.set(4, 1080)
+cap.set(3, 1920)
+cap.set(4, 1080)
 
 #Initialize a HeadTracker object
 ht = HeadTracker()
@@ -70,7 +72,6 @@ def mb_click(event,x,y,flags,param):
                 end_counter_line.append(y) #I use the line end positions to perform people counting
                 counter_line_is_drawn = 1 # Set the counter line drawn flag, so that you can only have one counter line
                 counter_line_middle_point = (start_counter_line[1]+end_counter_line[1])/2
-
 
             else: 
                 start_counter_line.append(x)
