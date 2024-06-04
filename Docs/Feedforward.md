@@ -124,3 +124,5 @@ This is the feedback on my questions.
 ## FeedForward 2 (04/06/2024)
 
 - Feedback 1: Even if you are training a model, you should log the hours in as "Code", otherwise we cannot see them.
+
+- Feedback 2: You need to take pictures of your hands up close with your head also visible, so that the model could better distinguish between them. Right now, it looks like it thinks everything that is skin coloured is 
