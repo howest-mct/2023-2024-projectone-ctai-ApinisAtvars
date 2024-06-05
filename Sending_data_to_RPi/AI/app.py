@@ -17,7 +17,7 @@ lc = LaptopClient()
 #Import the model
 
 #Medium model
-model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train2_medium_new_dataset\weights\best.pt")
+model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train4\weights\best.pt")
 
 # stream_url = 'rtsp://192.168.168.167:8554/live.sdp'
 
@@ -41,22 +41,6 @@ start_counter_line = []
 end_counter_line = []
 counter_line_middle_point = -1 #Mean height of counter line
 counter_line_is_drawn = 0
-
-
-#method to write to .csv file
-def write_to_csv(number_of_people):
-    filename = "D:/Project 1/2023-2024-projectone-ctai-ApinisAtvars/Sending_data_to_RPi/Files/{}.csv".format(time.strftime("%Y-%m-%d"))
-    #If a file like this^ exists, a header is not written
-    if os.path.isfile(filename):
-        with open(filename, "a", newline="") as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=["Time_stamp", "Number_of_people"])
-            writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
-    #Otherwise, it is written
-    else:
-        with open(filename, "a", newline="") as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=["Time_stamp", "Number_of_people"])
-            writer.writeheader()
-            writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
 
 
 # Callback method for left mouse button
@@ -162,8 +146,6 @@ while True:
     
     if previous_number_of_people != number_of_people:
         lc.data = number_of_people
-        write_to_csv(number_of_people)
-    
     previous_number_of_people = number_of_people
 
     if counter_line_is_drawn == 1:
