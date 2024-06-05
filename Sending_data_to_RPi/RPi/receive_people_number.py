@@ -3,6 +3,14 @@ import threading
 import time
 from RPi import GPIO
 from models.lcd import LCD
+import subprocess
+from threading import Thread
+import os
+import sys
+import csv
+
+# t = Thread(target=subprocess.run, args={"args": "cvlc v4l2:///dev/video0 --sout '#transcode{vcodec=h264,vb=1800,acodec=none}:rtp{sdp=rtsp://:8554/live.sdp}' :network-caching=50 Collapse", "shell": True})
+# t.start()
 
 previous_people_number = -1
 people_number = 0
@@ -79,6 +87,23 @@ def handle_client(sock, shutdown_flag):
         sock.close()
 
 
+
+def write_to_csv(number_of_people):
+    filename = "/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/Sending_data_to_RPi/RPi/Files/{}.csv".format(time.strftime("%Y-%m-%d"))
+    #If a file like this^ exists, a header is not written
+    if os.path.isfile(filename):
+        with open(filename, "a", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=["Time_stamp", "Number_of_people"])
+            writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
+    #Otherwise, it is written
+    else:
+        with open(filename, "a", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=["Time_stamp", "Number_of_people"])
+            writer.writeheader()
+            writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
+
+
+
 ###### MAIN PART ######
 
 try:
@@ -88,13 +113,14 @@ try:
     lcd.display_text("Number of people", lcd.LCD_LINE_1)
 
     while True:
-        # If you want to send data to AI script / notebook from here
         if client_socket:
             try:
                 if people_number != previous_people_number:
                     lcd.display_text("                ", lcd.LCD_LINE_2)
                     lcd.display_text(str(people_number), lcd.LCD_LINE_2)
                     previous_people_number = people_number
+                    write_to_csv(people_number)
+
             except Exception as e:
                 print(f"Failed to send message: {e}")
 
