@@ -17,7 +17,7 @@ lc = LaptopClient()
 #Import the model
 
 #Medium model
-model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train4\weights\best.pt")
+model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train4_NEW_SMALL_VERY_GOOD\weights\best.pt")
 
 # stream_url = 'rtsp://192.168.168.167:8554/live.sdp'
 

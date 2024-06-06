@@ -3,6 +3,8 @@ import threading
 import time
 import sys
 
+# TODO Send also the people_in and people_out
+
 class LaptopClient:
     def __init__(self) -> None:
         
@@ -16,6 +18,8 @@ class LaptopClient:
         self.shutdown_flag = threading.Event() # see: https://docs.python.org/3/library/threading.html#event-objects
         self.data = ""
         self.previously_sent = ""
+        self.people_in = ""
+        self.people_out = ""
 
     def setup_socket_client(self):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # create a socket instance
