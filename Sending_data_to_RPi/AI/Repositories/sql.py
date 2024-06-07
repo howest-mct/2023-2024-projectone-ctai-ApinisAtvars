@@ -1,6 +1,6 @@
 import sqlite3
 
-class DatabaseRepository:
+class DatabaseRepository():
     def __init__(self) -> None:
         self.path_to_db = r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\Sending_data_to_RPi\AI\Databases\occupation_meter.db"
         self.con = sqlite3.connect(self.path_to_db)
@@ -30,30 +30,26 @@ class DatabaseRepository:
         return not check.fetchone() is None
     
     def create_class_table(self):
-        self.cur.execute("CREATE TABLE class (ClassID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,Subject VARCHAR(45) NOT NULL,Teacher VARCHAR(45) NOT NULL,RoomNo VARCHAR(45) NOT NULL,Date VARCHAR(45) NOT NULL,StartTime VARCHAR(45) NOT NULL,EndTime VARCHAR(45) NOT NULL,NumberOfStudents INT NOT NULL);")
+        self.cur.execute("CREATE TABLE class (ClassID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,Subject VARCHAR(45) NOT NULL,Teacher VARCHAR(45) NOT NULL,RoomNo VARCHAR(45) NOT NULL,Date VARCHAR(45) NOT NULL,StartTime VARCHAR(45) NOT NULL,EndTime VARCHAR(45) NOT NULL,NumberOfStudents INT NOT NULL, LineStartXCoord INT, LineStartYCoord INT, LineEndXCoord INT, LineEndYCoord INT);")
         self.con.commit()
 
     def create_measurements_table(self):
         self.cur.execute("CREATE TABLE measurements (MeasurementID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ClassID INT,  PeopleIn INT NOT NULL, PeopleOut INT NOT NULL, Time VARCHAR(45), FOREIGN KEY(ClassID) REFERENCES class(ClassID))")
         self.con.commit()
-
     
     def delete_class_table(self):
         self.cur.execute("DROP TABLE class;")
         self.con.commit()
-        print("class table dropped")
     
     def delete_measurements_table(self):
         self.cur.execute("DROP TABLE measurements;")
         self.con.commit()
-        print("measurements table dropped")
     
     def close_connection(self):
         self.con.close()
-        print("Connection to db closed")
     
-    def add_class(self, subject: str, teacher: str, room_number: str, date: str, start_time: str, end_time: str, number_of_students: int):
-        command = "INSERT INTO class (Subject, Teacher, RoomNo, Date, StartTime, EndTime, NumberOfStudents) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', {})".format(subject, teacher, room_number, date, start_time, end_time, number_of_students)
+    def add_class(self, subject: str, teacher: str, room_number: str, date: str, start_time: str, end_time: str, number_of_students: int, line_start_X_coord = "NULL", line_start_Y_coord = "NULL", line_end_X_coord = "NULL", line_end_Y_coord = "NULL"):
+        command = "INSERT INTO class (Subject, Teacher, RoomNo, Date, StartTime, EndTime, NumberOfStudents, LineStartXCoord, LineStartYCoord, LineEndXCoord, LineEndYCoord) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, {}, {}, {})".format(subject, teacher, room_number, date, start_time, end_time, number_of_students, line_start_X_coord, line_start_Y_coord, line_end_X_coord, line_end_Y_coord)
         self.cur.execute(command)
         self.con.commit()
 
@@ -76,6 +72,12 @@ class DatabaseRepository:
     
     def remove_class(self, classId):
         self.cur.execute("DELETE FROM class WHERE ClassID = {}".format(classId))
+        self.con.commit()
+    
+    def get_coordinates(self, classId):
+        command = "SELECT LineStartXCoord, LineStartYCoord, LineEndXCoord, LineEndYCoord FROM class WHERE ClassID = {}".format(classId)
+        query = self.cur.execute(command)
+        return query.fetchone()
     
 if __name__ == "__main__":
     db = DatabaseRepository()
