@@ -15,6 +15,9 @@ import csv
 previous_people_number = -1
 people_number = 0
 
+people_in = 0
+people_out = 0
+
 
 # Global vars for use in methods/threads
 client_socket = None
