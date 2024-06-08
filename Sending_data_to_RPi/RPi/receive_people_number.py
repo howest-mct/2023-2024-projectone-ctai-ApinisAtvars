@@ -10,18 +10,17 @@ import sys
 import csv
 import json
 
-# t = Thread(target=subprocess.run, args={"args": "cvlc v4l2:///dev/video0 --sout '#transcode{vcodec=h264,vb=1800,acodec=none}:rtp{sdp=rtsp://:8554/live.sdp}' :network-caching=50 Collapse", "shell": True})
-# t.start()
-
-#TODO HOW THE FUCK DO I RECEIVE THE FINAL DATA?!?!?!?!?!?!?
+message_length = 0
 
 previous_people_number = -1
 people_number = 0
 
-people_in = []
-people_out = []
-timestamps = []
+#TODO Get final data into this dictionary
+final_data = {} # Final data to input in database
 
+HEADERSIZE = 10
+new_data = True
+full_message = ""
 
 # Global vars for use in methods/threads
 client_socket = None
@@ -58,48 +57,28 @@ def accept_connections(shutdown_flag):
 
 
 def handle_client(sock, shutdown_flag):
-    global previous_people_number, people_number, people_in, people_out, timestamps
-    try:
-        # while not shutdown_flag.is_set(): # as long as ctrl+c is not pressed
-        #     data = sock.recv(3) # try to receive 3 bytes
-        #     if not data: # when no data is received, try again (and shutdown flag is checked again)
-        #         # print("No data received")
-        #         continue # go back to top
-        #     if "&" in data.decode():
-        #         while "$" not in data:
-        #             print(data)
-        #     people_number = data.decode()
-        #     print("Received from client:", people_number) # print the received data, or do something with it
-        while not shutdown_flag.is_set():
-            data = sock.recv(1024)
-            if not data:
-                continue
-            if data.decode() == "final_data":
-                final_data = sock.recv(1024).decode()
-                try:
-                    json_data = json.loads(final_data)
-                    people_in = json_data['people_in']
-                    people_out = json_data['people_out']
-                    timestamps = json_data['timestamps']
-                    print("Final data received")
-                    print("People In:", people_in)
-                    print("People Out:", people_out)
-                    print("Timestamps:", timestamps)
-                except json.JSONDecodeError as e:
-                    print(f"Error decoding JSON: {e}")
-                break
-            else:
-                people_number = int(data.decode())
-                print("Received from client:", people_number)
-    except socket.timeout: # capture the timeouts 
-        pass
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        sock.close()
+    global previous_people_number, people_number, full_message, new_data, final_data
+    while not shutdown_flag.is_set():
+        try:
+            data = sock.recv(16)
+            data = data.decode()
 
+            if new_data:
+                message_length = int(data[:HEADERSIZE])
+                if message_length == 1 or message_length == 2 or message_length==3 or message_length==4:
+                    people_number = int(data[HEADERSIZE:])
+                new_data = False
 
+            full_message += data
 
+            if len(full_message)-HEADERSIZE == message_length:
+                print(full_message[HEADERSIZE:])
+                new_data = True
+                full_message = ""
+        except Exception:
+            pass
+        finally:
+            sock.close()
 
 
 def write_to_csv(number_of_people):
