@@ -6,6 +6,7 @@ from ultralytics import YOLO
 import csv
 import time
 import os
+import json
 
 #Import head tracker
 from models.head_tracker import HeadTracker
@@ -33,6 +34,13 @@ ht = HeadTracker()
 
 number_of_people = 0
 previous_number_of_people = -1
+people_in_list = []
+people_out_list = []
+timestamps = []
+
+people_in = 0
+people_out = 0
+
 
 all_box_coords = []
 previous_centroid_coords = {}
@@ -61,7 +69,6 @@ def mb_click(event,x,y,flags,param):
                 start_counter_line.append(x)
                 start_counter_line.append(y) # Else, I store the coords of this cursor position
 
-            print(cv2.EVENT_FLAG_LBUTTON) # The first printed event is false
 
 
 # Set the callback function
@@ -69,7 +76,7 @@ cv2.namedWindow("Webcam")
 cv2.setMouseCallback("Webcam", mb_click)
 
 def track_heads(all_box_coords, ht: HeadTracker):
-    global number_of_people
+    global number_of_people, people_in, people_out
     # update our centroid tracker using the computed set of bounding box rectangles
     objects = ht.update(all_box_coords)
 
@@ -88,10 +95,12 @@ def track_heads(all_box_coords, ht: HeadTracker):
                 if (centroid[0] > min(start_counter_line[0], end_counter_line[0])) and (centroid[0] < max(start_counter_line[0], end_counter_line[0])): # If it's between the line's endpoints
                     if centroid[1] > counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point: #If it's above the line and didn't use to be
                         number_of_people += 1
+                        people_in += 1
                     else:
                         if centroid[1] < counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point: #If it's below the line and didn't use to be
                             if number_of_people != 0:
                                 number_of_people -= 1
+                                people_out += 1
             except Exception as ex:
                 continue
 
@@ -148,6 +157,12 @@ while True:
         lc.data = number_of_people
         previous_number_of_people = number_of_people
 
+        people_out_list.append(people_out)
+        people_in_list.append(people_in)
+        timestamps.append(time.strftime("%H:%M:%S"))
+
+        
+
     if counter_line_is_drawn == 1:
         cv2.line(img, start_counter_line, end_counter_line, (0,255,0), 2)
     else:
@@ -162,12 +177,15 @@ while True:
 
     #If Q is pressed, end the video streaming
     if cv2.waitKey(1) == ord('q'):
-        lc.shutdown_flag.set()
-        lc.client_socket.close()
-        lc.receive_thread.join()
-        print("Client stopped gracefully")
+        lc.data = json.dumps({"People_in": people_in_list, "People_out": people_out_list, "Timestamps": timestamps})
+        time.sleep(1)
         break
 
+
+lc.shutdown_flag.set()
+lc.client_socket.close()
+lc.receive_thread.join()
+print("Client stopped gracefully")
 
 
 #Clear up everything

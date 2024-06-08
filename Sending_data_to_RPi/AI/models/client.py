@@ -18,8 +18,26 @@ class LaptopClient:
         self.shutdown_flag = threading.Event() # see: https://docs.python.org/3/library/threading.html#event-objects
         self.data = ""
         self.previously_sent = ""
-        self.people_in = ""
-        self.people_out = ""
+
+        self.message_length = 0
+        
+        self.HEADERSIZE = 10
+
+    # def send_final_data(self):
+    #     final_data = {
+    #         'people_in': self.people_in,
+    #         'people_out': self.people_out,
+    #         'timestamps': self.timestamps
+    #     }
+    #     final_data_json = json.dumps(final_data)
+    #     try:
+    #         # Send the keyword indicating final data
+    #         self.client_socket.sendall("final_data".encode())
+    #         time.sleep(0.1)  # Slight delay to ensure the server processes the keyword first
+    #         # Send the actual final data
+    #         self.client_socket.sendall(final_data_json.encode())
+    #     except Exception as e:
+    #         print(f"Failed to send final data: {e}")
 
     def setup_socket_client(self):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # create a socket instance
@@ -35,10 +53,16 @@ class LaptopClient:
             time.sleep(0.01)
             try:
                 if self.data != self.previously_sent:
-                    sock.sendall(str(self.data).encode()) # encode and send the data
+                    
+                    self.data = f"{len(str(self.data)):<10}" + str(self.data)
+                    self.data = self.data.encode()
+                    sock.sendall(self.data) # encode and send the data
                     self.previously_sent = self.data
             except socket.timeout:
                 continue
+        
+    
+
 
     def main(self):
         self.setup_socket_client()
