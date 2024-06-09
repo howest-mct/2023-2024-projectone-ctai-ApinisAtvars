@@ -1,8 +1,11 @@
 import sqlite3
+import sys
+import os
+
 
 class DatabaseRepository():
     def __init__(self) -> None:
-        self.path_to_db = r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\Sending_data_to_RPi\AI\Databases\occupation_meter.db"
+        self.path_to_db = str(sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../Databases/occupation_meter.db'))))
         self.con = sqlite3.connect(self.path_to_db)
         
         self.cur = self.con.cursor() # Create Cursor

@@ -80,7 +80,7 @@ if __name__=="__main__":
     ds.add_class("ASE", "Dieter", "KWE.A.2.302", "07.06.2024", "10:30", "12:30", 40)
     # ds.delete_class_table()
     # ds.delete_measurements_table()
-    ds.change_coordinates(1, 0, 0, 0, 0)
+    # ds.change_coordinates(1, 0, 0, 0, 0)
     print("coordinates changed")
     print(ds.get_coordinates())
     ds.close_connection()

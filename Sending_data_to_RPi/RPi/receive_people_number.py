@@ -16,6 +16,7 @@ previous_people_number = -1
 people_number = 0
 
 #TODO Get final data into this dictionary
+
 final_data = {} # Final data to input in database
 
 HEADERSIZE = 10
@@ -58,34 +59,38 @@ def accept_connections(shutdown_flag):
 
 def handle_client(sock, shutdown_flag):
     global previous_people_number, people_number, full_message, new_data, final_data
-    while not shutdown_flag.is_set():
-        try:
-            data = sock.recv(16)
-            data = data.decode()
+    try:
+        while not shutdown_flag.is_set():
+            try:
+                data = sock.recv(16) # Receive 16 bytes
+                data = data.decode() # Decode the message
 
-            if new_data:
-                message_length = int(data[:HEADERSIZE])
-                if message_length == 1 or message_length == 2 or message_length==3 or message_length==4:
-                    people_number = int(data[HEADERSIZE:])
-                new_data = False
+                if new_data: # If the data is a new message
+                    message_length = int(data[:HEADERSIZE]) # Get the number of bytes that the message is going to be
+                    new_data = False 
 
-            full_message += data
+                full_message += data
 
-            if len(full_message)-HEADERSIZE == message_length:
-                print(full_message[HEADERSIZE:])
-                new_data = True
-                full_message = ""
-        except Exception:
-            pass
-        finally:
-            sock.close()
+                if len(full_message)-HEADERSIZE == message_length: # If you've received the whole message
+                    if message_length == 1 or message_length == 2 or message_length==3 or message_length==4: # If its 1, 2, 3 or 4 bytes long, 
+                        people_number = int(data[HEADERSIZE:]) # assume that it's the number of people
+                    else:
+                        final_data = json.loads(full_message)
+                    new_data = True # Set new data to true again, so that the next message can be properly received
+                    full_message = ""
+            except Exception: # There will be an exception once the client side's code has stopped, so I just pass so that it doesn't clutter up the console
+                pass
+    except KeyboardInterrupt:
+        pass
+    finally:
+        sock.close() # Close the socket
 
 
 def write_to_csv(number_of_people):
     filename = "/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/Sending_data_to_RPi/RPi/Files/{}.csv".format(time.strftime("%Y-%m-%d"))
     #If a file like this^ exists, a header is not written
     if os.path.isfile(filename):
-        with open(filename, "a", newline="") as csvfile:
+        with open(filename, "a", newline="") as csvfile: # Append to the file, set newline to empty string, because writerow() automatically appends a newline character
             writer = csv.DictWriter(csvfile, fieldnames=["Time_stamp", "Number_of_people"])
             writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
     #Otherwise, it is written
@@ -127,6 +132,5 @@ finally:
     print("LCD turned off")
     GPIO.cleanup()
     print("GPIO cleaned up")
-    print(people_in)
-    print(people_out)
-    print(timestamps)
+
+
