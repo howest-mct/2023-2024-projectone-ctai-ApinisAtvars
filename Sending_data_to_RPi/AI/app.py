@@ -26,8 +26,8 @@ model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\t
 cap = cv2.VideoCapture(0)
 
 #Define the length and height of video capture
-cap.set(3, 1920)
-cap.set(4, 1080)
+cap.set(3, 640)
+cap.set(4, 640)
 
 #Initialize a HeadTracker object
 ht = HeadTracker()
@@ -178,10 +178,9 @@ while True:
     #If Q is pressed, end the video streaming
     if cv2.waitKey(1) == ord('q'):
         lc.data = json.dumps({"People_in": people_in_list, "People_out": people_out_list, "Timestamps": timestamps, "LineStartCoords": start_counter_line, "EndLineCoords": end_counter_line})
-        time.sleep(1)
         break
 
-
+time.sleep(2)
 lc.shutdown_flag.set()
 lc.client_socket.close()
 lc.receive_thread.join()

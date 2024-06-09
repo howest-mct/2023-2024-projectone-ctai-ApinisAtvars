@@ -68,7 +68,7 @@ class DatabaseUI():
         self.frame.grid()
         self.database.change_coordinates(self.selected_class[0], self.line_coords[0], self.line_coords[1], self.line_coords[2], self.line_coords[3])
         ttk.Label(self.frame, text="Succesfully changed coordinates!").grid(row=0, column=0)
-        Button(self.frame, text="Okay, cool", command=self.frame.destroy).grid(row=1, column=0)
+        Button(self.frame, text="Okay, cool", command=self.root.destroy).grid(row=1, column=0)
 
     def create_new_class_entry(self):
         self.frame.destroy()
