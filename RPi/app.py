@@ -129,10 +129,10 @@ def handle_client(sock, shutdown_flag):
                     json_objects = [obj + '}' if not obj.endswith('}') else obj for obj in json_objects]
                     json_objects = ['{' + obj if not obj.startswith('{') else obj for obj in json_objects]
 
-                    final_data = []
+                    # final_data = []
                     for obj in json_objects:
                         try:
-                            final_data.append(json.loads(obj))
+                            final_data = json.loads(obj)
                         except json.JSONDecodeError as e:
                             print(f"Error decoding JSON: {e} - with object: {obj}")
 
