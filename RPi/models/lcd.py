@@ -20,6 +20,8 @@ class LCD():
         self.E_DELAY = 0.0002
         self.LCD_LINE_1_RIGHT = 0x0F
 
+        self.LCD_BACKLIGHT_ON = True
+
         #Set display to 8bit mode
         self.send_byte_with_e_toggle(0b0011_0000)
         self.send_byte_with_e_toggle(0b0011_0000)
@@ -39,9 +41,13 @@ class LCD():
     #This function sends data to the display, according to the mode
     def send_data_bits(self, byte, mode):
         #Split into MS and LS nibbles, and OR them with (1111 or-ed with mode)
-        #                                     
-        self.MSN_nibble = (byte & 0b1111_0000)|(0x8|mode)
-        self.LSN_nibble = ((byte & 0b0000_1111) << 4) |(0x8|mode)
+        #              
+        if self.LCD_BACKLIGHT_ON == True:                       
+            self.MSN_nibble = (byte & 0b1111_0000)|(0x8|mode)
+            self.LSN_nibble = ((byte & 0b0000_1111) << 4) |(0x8|mode)
+        else:
+            self.MSN_nibble = (byte & 0b1111_0000)|(0x0|mode)
+            self.LSN_nibble = ((byte & 0b0000_1111) << 4) |(0x0|mode)
 
         #Send both nibbles individually
         self.send_byte_with_e_toggle(self.MSN_nibble)
@@ -91,6 +97,16 @@ class LCD():
     def clear_display(self):
         #Clear display & cursor home function
         self.send_instruction(1)
+    
+    def turn_off(self):
+        self.LCD_BACKLIGHT_ON = False
+
+        self.send_instruction(0b1000)
+    
+    def turn_back_on(self):
+        self.LCD_BACKLIGHT_ON = True
+
+        self.send_instruction(0b0000)
 
     if __name__ == '__main__':
         from lcd import LCD
@@ -106,3 +122,9 @@ class LCD():
         lcd.display_text(" o", lcd.LCD_LINE_2)
         time.sleep(1)
         lcd.clear_display()
+        lcd.turn_off()
+        time.sleep(0.5)
+        lcd.turn_back_on()
+        time.sleep(0.5)
+        lcd.turn_off()
+        GPIO.cleanup()
