@@ -79,6 +79,11 @@ class DatabaseRepository():
         query = self.cur.execute(command)
         return query.fetchone()
     
+    def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
+        command = "UPDATE class SET LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {}".format(newStartX, newStartY, newEndX, newEndY, classId)
+        self.cur.execute(command)
+        self.con.commit()
+    
 if __name__ == "__main__":
     db = DatabaseRepository()
     # db.delete_measurements_table()

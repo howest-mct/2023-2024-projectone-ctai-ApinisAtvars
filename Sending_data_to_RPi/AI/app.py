@@ -177,7 +177,7 @@ while True:
 
     #If Q is pressed, end the video streaming
     if cv2.waitKey(1) == ord('q'):
-        lc.data = json.dumps({"People_in": people_in_list, "People_out": people_out_list, "Timestamps": timestamps})
+        lc.data = json.dumps({"People_in": people_in_list, "People_out": people_out_list, "Timestamps": timestamps, "LineStartCoords": start_counter_line, "EndLineCoords": end_counter_line})
         time.sleep(1)
         break
 
