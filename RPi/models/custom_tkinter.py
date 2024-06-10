@@ -17,20 +17,17 @@ class DatabaseUI():
         self.frame = None
 
         self.selected_class = None
-        self.save_line_coords = False
-        self.overwrite_line = False
-        self.new_class_created = False
         self.line_coords = None
+
+        self.save_line_coords = False
+        self.new_class_created = False
+        
 
         self.padding = 50
 
         self.choose_class()
     
-    # def first_window(self):
-    #     self.frame = ctk.CTkFrame(master=self.root, fg_color="transparent").grid()
-    #     ctk.CTkLabel(self.frame, text="Choose the classroom", fg_color="transparent").grid(row=0, column=0)
-    #     ctk.CTkButton(self.frame, text="Yes", command=self.save_coords_yes).grid(row=1, column=0)
-    
+
     def destroy_and_create_frame(self):
         self.frame.destroy()
         self.frame = ctk.CTkFrame(self.root, corner_radius=10, fg_color="transparent")
@@ -48,10 +45,8 @@ class DatabaseUI():
         drop.pack(pady=(10, 20))
 
         ctk.CTkLabel(self.frame, text="(ClassId, ClassName, Teacher, Room, Date, StartT, EndT, Counter line coordinates)").pack(pady = (0, 10))
-
         ctk.CTkLabel(self.frame, text="Choose a class from the dropdown menu, or create a new one.").pack(pady = (0,10))
         ctk.CTkLabel(self.frame, text="Tip: If You choose an existing class, you can create a duplicate later.").pack(pady = (5,10))
-
 
         ctk.CTkButton(self.frame, text="Choose class", command=lambda: self.check_if_coords_exist(clicked.get())).pack(pady=(0, 10))
         ctk.CTkButton(self.frame, text="Create new class", command=self.create_new_class).pack()
@@ -98,7 +93,7 @@ class DatabaseUI():
         self.root.destroy()
 
     def overwrite_class_coords(self):
-        self.overwrite_line = True
+        self.save_line_coords = True
         self.root.destroy()
     
     def create_duplicate_class(self):
@@ -111,10 +106,12 @@ class DatabaseUI():
             self.selected_class[6], # End Time
             self.selected_class[7], # Number of Students
         )
+        self.save_line_coords = True
 
     
 
     def create_new_class(self):
+        
         self.destroy_and_create_frame()
 
         entries = {}
@@ -144,6 +141,7 @@ class DatabaseUI():
                                end,
                                student_number):
         self.database.add_class(subject, teacher, room, date, start, end, student_number)
+        self.save_line_coords = True
         self.new_class_created = True
         self.root.destroy()
 
@@ -153,5 +151,4 @@ if __name__=="__main__":
     dui.root.mainloop()
     print("New class created: {}".format(dui.new_class_created))
     print("Save Line Coords: {}".format(dui.save_line_coords))
-    print("Overwrite Line: {}".format(dui.overwrite_line))
     print("Line Coordinates: {}".format(dui.line_coords))
