@@ -22,6 +22,7 @@ class DatabaseUI():
         self.selected_class = None  # Variable to store the selected class
         self.frame = None
         self.line_coords = (1,2,3,4) # (StartLineX, StartLineY, EndLineX, EndLineY)
+        self.save_line_coords = False
         self.override_line = False
 
     def choose_to_save_coords(self):
@@ -97,10 +98,10 @@ class DatabaseUI():
         ))
         submit_button.grid(row=8, column=1, pady=10)
     
-    def check_if_coords_exist(self):
+    def check_if_coords_exist(self): # Check if the selected class has coorda already assigned to it
         self.frame = ttk.Frame(self.root, padding=self.padding)
         self.frame.grid()  # Add frame to the root window
-        if self.database.get_coordinates_by_id(self.selected_class[0]) != (None, None, None, None):
+        if self.database.get_coordinates_by_id(self.selected_class[0]) != (None, None, None, None): # If it has coords assigned to it
             ttk.Label(self.frame, text="There already are line coordinates mapped to this class").grid(column=0, row=0)
             ttk.Label(self.frame, text="Do you wish to override them?").grid(row=1, column=0)
             Button(self.frame, text="Yes", command=lambda: self.override_existing_coords()).grid(row=2, column=0)
@@ -111,11 +112,12 @@ class DatabaseUI():
             ttk.Button(self.frame, text="Save them here", command=lambda: self.override_existing_coords()).grid(row=2, column=0)
             ttk.Button(self.frame, text="Create a new entry", command=lambda: self.create_duplicate_entry()).grid(row=3, column=0)
 
-    def override_existing_coords(self):
+    def override_existing_coords(self): # Override coordinates of existing class
         self.frame.destroy()
         self.frame = ttk.Frame(self.root, padding=self.padding)
         self.frame.grid()
-        self.database.change_coordinates(self.selected_class[0], self.line_coords[0], self.line_coords[1], self.line_coords[2], self.line_coords[3])
+        self.override_line = True # Set this variable to true, which will be checked at the end of the main code to see whether to override coordinates or not
+        # self.database.change_coordinates(self.selected_class[0], self.line_coords[0], self.line_coords[1], self.line_coords[2], self.line_coords[3])
         ttk.Label(self.frame, text="Coordinates overridden!").grid(row=0, column=0)
         Button(self.frame, text="Close", command=self.root.destroy).grid(row=1, column=0)
 
@@ -123,10 +125,20 @@ class DatabaseUI():
         self.frame.destroy()
         self.frame = ttk.Frame(self.root, padding=self.padding)
         self.frame.grid()
-        # def add_class(self, subject: str, teacher: str, room_number: str, date: str, start_time: str, end_time: str, number_of_students: int, line_start_X_coord = "NULL", line_start_Y_coord = "NULL", line_end_X_coord = "NULL", line_end_Y_coord = "NULL"):
-        self.database.add_class(self.selected_class[1], self.selected_class[2], self.selected_class[3], self.selected_class[4], self.selected_class[5], self.selected_class[6], self.selected_class[7], self.line_coords[0], self.line_coords[1], self.line_coords[2], self.line_coords[3])
+        self.database.add_class(self.selected_class[1], # subject
+                                self.selected_class[2], # teacher
+                                self.selected_class[3], # room_number
+                                self.selected_class[4], # date
+                                self.selected_class[5], # start_time
+                                self.selected_class[6], # end_time
+                                self.selected_class[7]  # number_of_students
+                                # self.line_coords[0],
+                                # self.line_coords[1], 
+                                # self.line_coords[2], 
+                                # self.line_coords[3]
+                                )
         ttk.Label(self.frame, text="New Class entry created successfully!").grid(row=0, column=0)
-        Button(self.frame, text="Thank God!", command=self.root.destroy).grid(row=1, column=0)
+        Button(self.frame, text="Okay", command=self.root.destroy).grid(row=1, column=0)
 
     def change_coordinates_for_class_entry(self, classId, newStartX, newStartY, newEndX, newEndY):
         self.database.change_coordinates(classId, newStartX, newStartY, newEndX, newEndY)
@@ -158,6 +170,7 @@ class DatabaseUI():
 
     def save_coords_yes(self):
         self.frame.destroy()  # Destroy the frame
+        self.save_line_coords = True
         self.choose_class()  # Proceed to choose_class
 
 if __name__ == "__main__":

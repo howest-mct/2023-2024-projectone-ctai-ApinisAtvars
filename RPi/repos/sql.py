@@ -87,6 +87,12 @@ class DatabaseRepository():
         self.cur.execute(command)
         self.con.commit()
     
+    def get_last_class_id(self) -> int:
+        query = self.cur.execute("SELECT max(ClassID) from class")
+        return query.fetchone()
+    
+        
+    
 if __name__ == "__main__":
     db = DatabaseRepository()
     # db.delete_measurements_table()

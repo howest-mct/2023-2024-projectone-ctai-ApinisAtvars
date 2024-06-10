@@ -38,7 +38,8 @@ def write_to_csv(number_of_people):
 def predict(img):
     lc = LaptopClient()
 
-    model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train2_medium_new_dataset\weights\best.pt")
+    model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train4_NEW_SMALL_VERY_GOOD\weights\best.pt")
+    
 
     ht = HeadTracker()
 

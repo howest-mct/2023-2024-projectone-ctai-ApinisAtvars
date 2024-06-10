@@ -69,6 +69,8 @@ class DatabaseService:
     def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
         self._repository.change_coordinates(classId, newStartX, newStartY, newEndX, newEndY)
 
+    def get_last_class_id(self):
+        return self._repository.get_last_class_id()
 
 if __name__=="__main__":
     ds = DatabaseService(DatabaseRepository())
@@ -77,10 +79,11 @@ if __name__=="__main__":
     # ds.remove_class()
     # ds.remove_measurement()
     # ds.add_measurement(2, 50, 45, "10:45")
-    ds.add_class("ASE", "Dieter", "KWE.A.2.302", "07.06.2024", "10:30", "12:30", 40)
+    ds.add_class("ASE", "Dieter", "KWE.A.2.302", "07.06.2024", "10:30", "12:30", 40, 400, 400, 600, 400)
     # ds.delete_class_table()
     # ds.delete_measurements_table()
     # ds.change_coordinates(1, 0, 0, 0, 0)
     print("coordinates changed")
     print(ds.get_coordinates())
+    print(ds.get_last_class_id())
     ds.close_connection()
