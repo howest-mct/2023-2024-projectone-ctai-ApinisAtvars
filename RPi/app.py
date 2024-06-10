@@ -11,7 +11,7 @@ import csv
 import json
 from repos.sql import DatabaseRepository
 from services.database_service import DatabaseService
-from models.pop_ups import DatabaseUI
+from models.custom_tkinter import DatabaseUI
 
 ds = DatabaseService(DatabaseRepository())
 
@@ -20,7 +20,6 @@ message_length = 0
 previous_people_number = -1
 people_number = 0
 
-#TODO Get final data into this dictionary
 
 final_data = {} # Final data to input in database
 
@@ -129,7 +128,6 @@ def handle_client(sock, shutdown_flag):
                     json_objects = [obj + '}' if not obj.endswith('}') else obj for obj in json_objects]
                     json_objects = ['{' + obj if not obj.startswith('{') else obj for obj in json_objects]
 
-                    # final_data = []
                     for obj in json_objects:
                         try:
                             final_data = json.loads(obj)
