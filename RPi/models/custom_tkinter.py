@@ -152,3 +152,6 @@ if __name__=="__main__":
     print("New class created: {}".format(dui.new_class_created))
     print("Save Line Coords: {}".format(dui.save_line_coords))
     print("Line Coordinates: {}".format(dui.line_coords))
+    classid = ds.get_last_class_id()
+    ds.change_coordinates(classid, 200, 200, 400, 200)
+    print("last class id changed")

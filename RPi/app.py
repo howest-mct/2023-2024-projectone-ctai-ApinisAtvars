@@ -60,39 +60,6 @@ def accept_connections(shutdown_flag):
         except socket.timeout: # ignore timeout errors
             pass
 
-
-# def handle_client(sock, shutdown_flag):
-#     global previous_people_number, people_number, full_message, new_data, final_data
-#     try:
-#         while not shutdown_flag.is_set():
-#             # try:
-#                 data = sock.recv(16) # Receive 16 bytes
-#                 data = data.decode() # Decode the message
-
-#                 if new_data: # If the data is a new message
-#                     message_length = int(data[:HEADERSIZE]) # Get the number of bytes that the message is going to be
-#                     new_data = False 
-
-#                 full_message += data
-
-#                 if len(full_message)-HEADERSIZE == message_length: # If you've received the whole message
-#                     if message_length == 1 or message_length == 2 or message_length==3 or message_length==4: # If its 1, 2, 3 or 4 bytes long, 
-#                         people_number = int(data[HEADERSIZE:]) # assume that it's the number of people
-#                     else:
-#                         json_objects = full_message.split('}{')
-#                         json_objects = ['{' + obj + '}' for obj in json_objects]
-#                         final_data = json.loads(full_message)
-
-#                     new_data = True # Set new data to true again, so that the next message can be properly received
-#                     full_message = ""
-#             # except Exception: # There will be an exception once the client side's code has stopped, so I just pass so that it doesn't clutter up the console
-#             #     pass
-#     except KeyboardInterrupt:
-#         pass
-#     finally:
-#         sock.close() # Close the socket
-
-
 def handle_client(sock, shutdown_flag):
     global previous_people_number, people_number, full_message, new_data, final_data
     full_message = ""
@@ -160,16 +127,33 @@ def write_to_csv(number_of_people):
             writer.writerow({"Time_stamp": time.strftime("%H:%M:%S"), "Number_of_people": number_of_people})
 
 
-def database_user_interface():
-    dui = DatabaseUI(ds)
-    dui.line_coords = tuple()
-
 ###### MAIN PART ######
+databaseUI = DatabaseUI(ds)
+databaseUI.root.mainloop()
 
 try:
     setup_socket_server()
     lcd = LCD()
     lcd.display_text("Number of people", lcd.LCD_LINE_1)
+
+    while client_socket == None: # While there isn't a connection to laptop
+        pass
+
+    try:
+        # Send whether you will use previous line coords or not
+        client_socket.sendall(str(int(databaseUI.save_line_coords)).encode())
+    except Exception as e:
+        print(f"Failed to send save_line_coords: {e}")
+    
+    if databaseUI.save_line_coords == False: # If you want to use pre-existing line coordinates
+        #Then send them to the laptop
+        try:
+            
+            line_coords_message = f"{len(str(databaseUI.line_coords)):<10}" + str(databaseUI.line_coords)
+            line_coords_message = line_coords_message.encode()
+            client_socket.sendall(line_coords_message)
+        except Exception as e:
+            print(f"Failed to send line_coords: {e}")
 
     while True:
         if client_socket:

@@ -82,14 +82,22 @@ class DatabaseRepository():
         query = self.cur.execute(command)
         return query.fetchone()
     
+    # def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
+    #     command = "UPDATE class SET LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {};".format(newStartX, newStartY, newEndX, newEndY, classId)
+    #     self.cur.execute(command)
+    #     self.con.commit()
     def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
-        command = "UPDATE class SET LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {}".format(newStartX, newStartY, newEndX, newEndY, classId)
-        self.cur.execute(command)
+        command = """
+            UPDATE class 
+            SET LineStartXCoord = ?, LineStartYCoord = ?, LineEndXCoord = ?, LineEndYCoord = ? 
+            WHERE ClassID = ?
+        """
+        self.cur.execute(command, (newStartX, newStartY, newEndX, newEndY, classId))
         self.con.commit()
     
     def get_last_class_id(self) -> int:
         query = self.cur.execute("SELECT max(ClassID) from class")
-        return query.fetchone()
+        return query.fetchone()[0]
     
         
     
