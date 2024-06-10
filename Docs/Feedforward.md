@@ -125,4 +125,21 @@ This is the feedback on my questions.
 
 - Feedback 1: Even if you are training a model, you should log the hours in as "Code", otherwise we cannot see them.
 
-- Feedback 2: You need to take pictures of your hands up close with your head also visible, so that the model could better distinguish between them. Right now, it looks like it thinks everything that is skin coloured is 
+- Feedback 2: You need to take pictures of your hands up close with your head also visible, so that the model could better distinguish between them. Right now, it looks like it thinks everything that is skin coloured is
+
+## Conversation 4 (Date: 10/06/2024)
+
+Lecturer: Pieter-Jan Beeckman
+
+Questions for this conversation:
+
+- Question 1: I can't get the X11 forwarding to work for VS Code. Is it fine if I run my RPi part through PuTTY?
+
+- Question 2: What is the Service in the production markdown file?
+
+This is the feedback on my questions:
+
+- Feedback 1: Yes
+
+- Feedback 2: It's a file that makes your RPi script automatically run. You will be running it through PuTTY, so this will not be needed for you. Instead, you can make a script that automatically launches PuTTY and inputs the code needed for running the python file through there. 
+
