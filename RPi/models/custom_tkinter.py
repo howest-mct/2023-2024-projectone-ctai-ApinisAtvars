@@ -15,6 +15,7 @@ class DatabaseUI():
         ctk.set_appearance_mode("dark")
 
         self.frame = None
+
         self.selected_class = None
         self.save_line_coords = False
         self.overwrite_line = False
@@ -150,4 +151,7 @@ if __name__=="__main__":
     ds = DatabaseService(DatabaseRepository())
     dui = DatabaseUI(ds)
     dui.root.mainloop()
-    print(dui.new_class_created)
+    print("New class created: {}".format(dui.new_class_created))
+    print("Save Line Coords: {}".format(dui.save_line_coords))
+    print("Overwrite Line: {}".format(dui.overwrite_line))
+    print("Line Coordinates: {}".format(dui.line_coords))
