@@ -51,6 +51,24 @@ counter_line_middle_point = -1 #Mean height of counter line
 counter_line_is_drawn = 0
 
 
+def parse_tuple_from_string(data_str):
+        # Remove the surrounding parentheses
+        data_str = data_str.strip('()')
+
+        # Split the string by commas
+        data_list = data_str.split(',')
+
+        # Convert each item to the appropriate type (int or str)
+        parsed_data = []
+        for item in data_list:
+            item = item.strip()
+            if item.isdigit():
+                parsed_data.append(int(item))
+            else:
+                parsed_data.append(item.strip("'"))
+
+        return tuple(parsed_data)
+
 # Callback method for left mouse button
 def mb_click(event,x,y,flags,param):
     global start_counter_line, end_counter_line, counter_line_is_drawn, counter_line_middle_point
@@ -135,6 +153,52 @@ def draw_bounding_box(box, image):
 
 
 lc.setup_socket_client()
+
+# Receiving databaseUI.save_line_coords
+while lc.client_socket == None:
+    pass # Wait until connected
+
+save_line_coords = None
+line_coords = None
+
+while save_line_coords == None:
+    try:
+        save_line_coords = lc.client_socket.recv(1).decode() # try to receive save_line_coords
+    except Exception as e:
+        print(f"Error while receiving save_line_coords: {e}")
+
+print(f"Save line coords? {save_line_coords}")
+
+import socket
+
+
+if int(save_line_coords) == False:
+    try:
+        full_message = ""
+        while line_coords == None:
+            try:
+                data = lc.client_socket.recv(1024)
+                data = data.decode()
+                if len(data) >= 10:
+                    message_length = int(data[:10])  # Get the number of bytes that the message is going to be
+                    full_message += data
+                if len(full_message) - 10 == message_length:
+                    line_coords = parse_tuple_from_string(full_message[10:])
+            except socket.timeout:
+                continue
+    except Exception as e:
+        print(f"Error while receiving line coordinates: {e}")
+
+print(f"Line coords: {line_coords}")
+
+if line_coords != None:
+    start_counter_line.append(line_coords[0])
+    start_counter_line.append(line_coords[1])
+    end_counter_line.append(line_coords[2])
+    end_counter_line.append(line_coords[3])
+    counter_line_is_drawn = 1
+    counter_line_middle_point = (start_counter_line[1]+end_counter_line[1])/2
+    
 
 while True:
     #Get frame
