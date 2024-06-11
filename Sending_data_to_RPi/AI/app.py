@@ -1,6 +1,8 @@
 import cv2
 import math
 from ultralytics import YOLO
+import socket
+
 
 # csv, os and time needed for writing to the csv file
 import csv
@@ -26,8 +28,8 @@ model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\t
 cap = cv2.VideoCapture(0)
 
 #Define the length and height of video capture
-cap.set(3, 640)
-cap.set(4, 640)
+cap.set(3, 1000)
+cap.set(4, 1000)
 
 #Initialize a HeadTracker object
 ht = HeadTracker()
@@ -169,7 +171,6 @@ while save_line_coords == None:
 
 print(f"Save line coords? {save_line_coords}")
 
-import socket
 
 
 if int(save_line_coords) == False:

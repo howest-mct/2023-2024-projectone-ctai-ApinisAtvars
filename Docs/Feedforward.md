@@ -143,3 +143,12 @@ This is the feedback on my questions:
 
 - Feedback 2: It's a file that makes your RPi script automatically run. You will be running it through PuTTY, so this will not be needed for you. Instead, you can make a script that automatically launches PuTTY and inputs the code needed for running the python file through there. 
 
+## FeedForward 3 (Date: 11/06/2024)
+
+- Feedback 1: If you don't make the laser cut box, it's at least better to have a shoebox, or maybe some box from Action.
+
+- Feedback 2: Work on a better explanation for your project.
+
+- Feedback 3: Think about the edge cases of your model, what if a person falls/is in a wheelchair/is a child?
+
+- Feedback 4: Send an email to Geert and CC Marie about reserving a table close to the doorway for your presentation.
