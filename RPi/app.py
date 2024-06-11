@@ -128,25 +128,36 @@ def write_to_csv(number_of_people):
 
 
 ###### MAIN PART ######
+lcd = LCD()
+lcd.display_text("Enter the class", lcd.LCD_LINE_1)
+lcd.display_text("Using the GUI", lcd.LCD_LINE_2)
+
+
+
 databaseUI = DatabaseUI(ds)
 databaseUI.root.mainloop()
 
 try:
     setup_socket_server()
-    lcd = LCD()
-    lcd.display_text("Number of people", lcd.LCD_LINE_1)
+    lcd.clear_display()
+    lcd.display_text("Waiting for     connection...")
 
     while client_socket == None: # While there isn't a connection to laptop
         pass
 
+    lcd.clear_display()
+    lcd.display_text("Sending         save_line_coords")
     try:
         # Send whether you will use previous line coords or not
         client_socket.sendall(str(int(databaseUI.save_line_coords)).encode())
     except Exception as e:
         print(f"Failed to send save_line_coords: {e}")
     
+    
     if databaseUI.save_line_coords == False: # If you want to use pre-existing line coordinates
         #Then send them to the laptop
+        lcd.clear_display()
+        lcd.display_text("Sending         coordinates")
         try:
             
             line_coords_message = f"{len(str(databaseUI.line_coords)):<10}" + str(databaseUI.line_coords)
@@ -154,6 +165,9 @@ try:
             client_socket.sendall(line_coords_message)
         except Exception as e:
             print(f"Failed to send line_coords: {e}")
+
+    lcd.clear_display()
+    lcd.display_text("People number:", lcd.LCD_LINE_1)
 
     while True:
         if client_socket:
@@ -171,7 +185,7 @@ except KeyboardInterrupt:
     print("Server shutting down")
     shutdown_flag.set() # set the shutdown flag
 finally:
-    # server_thread.join() # join the thread, so we wait for it to finish (gracefull exit)
+    server_thread.join() # join the thread, so we wait for it to finish (gracefull exit)
     server_socket.close() # make sure to close any open connections
     print(final_data)
     lcd.clear_display()
@@ -179,3 +193,10 @@ finally:
     print("LCD turned off")
     GPIO.cleanup()
     print("GPIO cleaned up")
+
+
+    # Adding measurements to database
+    class_id = ds.get_last_class_id() if databaseUI.new_class_created == True else int(databaseUI.selected_class[0])
+    for number, entry in enumerate(final_data['People_in']):
+        ds.add_measurement(class_id, final_data['People_in'][number], final_data['People_out'][number], final_data['Timestamps'][number])
+    print("Measurements added")

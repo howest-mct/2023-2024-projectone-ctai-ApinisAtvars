@@ -97,19 +97,19 @@ class DatabaseRepository():
     
     def get_last_class_id(self) -> int:
         query = self.cur.execute("SELECT max(ClassID) from class")
-        return query.fetchone()[0]
+        return int(query.fetchone()[0])
     
         
     
 if __name__ == "__main__":
     db = DatabaseRepository()
     # db.delete_measurements_table()
-    db.add_class("Basic Programming", "Marie Dewitte", "KWE.A.2.301", "06-06-2024", "8:30", "10:30", 40)
-    db.add_measurement(1, 10, 20, "10:35")
+    # db.add_class("Basic Programming", "Marie Dewitte", "KWE.A.2.301", "06-06-2024", "8:30", "10:30", 40)
+    # db.add_measurement(1, 10, 20, "10:35")
     ac = db.query_all_classes()
     print(ac)
-    am = db.query_all_measurements()
-    print(am)
+    # am = db.query_all_measurements()
+    # print(am)
     # db.remove_class(1)
     # db.remove_measurement(1)
     db.close_connection()
