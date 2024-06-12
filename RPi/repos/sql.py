@@ -88,10 +88,12 @@ class DatabaseRepository():
         command = "UPDATE measurements SET ClassID = {}, PeopleIn = {}, PeopleOut = {}, Time = '{}' WHERE MeasurementID = {}".format(class_id, people_in, people_out, time, measurement_id)
         self.cur.execute(command)
         self.con.commit()
-    # def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
-    #     command = "UPDATE class SET LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {};".format(newStartX, newStartY, newEndX, newEndY, classId)
-    #     self.cur.execute(command)
-    #     self.con.commit()
+    
+    def update_class(self, class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord):
+        command = "UPDATE class SET Subject = {}, Teacher = {}, RoomNo = '{}', Date = '{}', StartTime = '{}', EndTime = '{}', NumberOfStudents = {}, LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {};".format(subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord, class_id)
+        self.cur.execute(command)
+        self.con.commit()
+   
     def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
         command = """
             UPDATE class 

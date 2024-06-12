@@ -75,6 +75,8 @@ class DatabaseService:
     def update_measurement(self, measurement_id: int,class_id: int, people_in: int, people_out: int, time: str):
         self._repository.update_measurement(measurement_id, class_id, people_in, people_out, time)
 
+    def update_class(self, class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord):
+        self._repository.update_class(class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
 if __name__=="__main__":
     ds = DatabaseService(DatabaseRepository())
     # print(ds.query_all_classes())

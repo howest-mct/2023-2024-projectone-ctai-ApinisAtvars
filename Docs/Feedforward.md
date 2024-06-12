@@ -152,3 +152,9 @@ This is the feedback on my questions:
 - Feedback 3: Think about the edge cases of your model, what if a person falls/is in a wheelchair/is a child?
 
 - Feedback 4: Send an email to Geert and CC Marie about reserving a table close to the doorway for your presentation.
+
+## Study Night (Date: 13/06/2024 to 14/06/2024)
+
+- Question 1 (Marie Dewitte): Can I add more images to my dataset?
+
+- Feedback 1: Judging by how much labeling You have already done, I think You can.
