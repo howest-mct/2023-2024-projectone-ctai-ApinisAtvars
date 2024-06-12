@@ -87,6 +87,11 @@ class DatabaseRepository():
         self.cur.execute(command)
         self.con.commit()
     
+    def update_measurement(self, measurement_id: int,class_id: int, people_in: int, people_out: int, time: str):
+        command = "UPDATE measurements SET ClassID = {}, PeopleIn = {}, PeopleOut = {}, Time = {} WHERE MeasurementID = {}".format(class_id, people_in, people_out, time, measurement_id)
+        self.cur.execute(command)
+        self.con.commit()
+    
 if __name__ == "__main__":
     db = DatabaseRepository()
     # db.delete_measurements_table()

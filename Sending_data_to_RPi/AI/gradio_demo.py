@@ -16,7 +16,6 @@ from models.head_tracker import HeadTracker
 from models.client import LaptopClient
 
 
-
 def write_to_csv(number_of_people):
     filename = "D:/Project 1/2023-2024-projectone-ctai-ApinisAtvars/Sending_data_to_RPi/Files/{}.csv".format(time.strftime("%Y-%m-%d"))
     #If a file like this^ exists, a header is not written

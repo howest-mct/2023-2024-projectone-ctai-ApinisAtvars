@@ -133,7 +133,6 @@ lcd.display_text("Enter the class", lcd.LCD_LINE_1)
 lcd.display_text("Using the GUI", lcd.LCD_LINE_2)
 
 
-
 databaseUI = DatabaseUI(ds)
 databaseUI.root.mainloop()
 
@@ -147,6 +146,7 @@ try:
 
     lcd.clear_display()
     lcd.display_text("Sending         save_line_coords")
+    time.sleep(0.5) # A bit of time to display the message
     try:
         # Send whether you will use previous line coords or not
         client_socket.sendall(str(int(databaseUI.save_line_coords)).encode())
@@ -158,6 +158,7 @@ try:
         #Then send them to the laptop
         lcd.clear_display()
         lcd.display_text("Sending         coordinates")
+        time.sleep(0.5) # A bit of time to display the message
         try:
             
             line_coords_message = f"{len(str(databaseUI.line_coords)):<10}" + str(databaseUI.line_coords)
@@ -200,3 +201,7 @@ finally:
     for number, entry in enumerate(final_data['People_in']):
         ds.add_measurement(class_id, final_data['People_in'][number], final_data['People_out'][number], final_data['Timestamps'][number])
     print("Measurements added")
+    if databaseUI.save_line_coords == True:
+        ds.change_coordinates(class_id, final_data['LineStartCoords'][0], final_data['LineStartCoords'][1], final_data['EndLineCoords'][0], final_data['EndLineCoords'][1])
+        print("Class coordinates added")
+    

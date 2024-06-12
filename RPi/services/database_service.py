@@ -71,6 +71,9 @@ class DatabaseService:
 
     def get_last_class_id(self):
         return self._repository.get_last_class_id()
+    
+    def update_measurement(self, measurement_id: int,class_id: int, people_in: int, people_out: int, time: str):
+        self._repository.update_measurement(measurement_id, class_id, people_in, people_out, time)
 
 if __name__=="__main__":
     ds = DatabaseService(DatabaseRepository())

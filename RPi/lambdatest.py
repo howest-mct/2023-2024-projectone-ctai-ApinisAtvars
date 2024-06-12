@@ -5,3 +5,4 @@ something = False
 y = 1 if something == True else 0
 
 print(y)
+

@@ -5,11 +5,13 @@ import os
 
 class DatabaseRepository():
     def __init__(self) -> None:
-        self.path_to_db = str(sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../Databases/occupation_meter.db'))))
-        self.con = sqlite3.connect(self.path_to_db)
+        # self.path_to_db = str(sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../databases/occupation_meter.db'))))
+        self.path_to_db = r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/databases/occupation_meter.db"
+        self.con = sqlite3.connect(database=self.path_to_db)
         
         self.cur = self.con.cursor() # Create Cursor
 
+        
         if self.check_if_table_exists("class") == False: # If the occupation_meter table doesn't exist, create a new one
             self.create_class_table() # Create the table "Class"
             print("'class' table created")
@@ -82,6 +84,10 @@ class DatabaseRepository():
         query = self.cur.execute(command)
         return query.fetchone()
     
+    def update_measurement(self, measurement_id: int,class_id: int, people_in: int, people_out: int, time: str):
+        command = "UPDATE measurements SET ClassID = {}, PeopleIn = {}, PeopleOut = {}, Time = '{}' WHERE MeasurementID = {}".format(class_id, people_in, people_out, time, measurement_id)
+        self.cur.execute(command)
+        self.con.commit()
     # def change_coordinates(self, classId, newStartX, newStartY, newEndX, newEndY):
     #     command = "UPDATE class SET LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {};".format(newStartX, newStartY, newEndX, newEndY, classId)
     #     self.cur.execute(command)
@@ -103,13 +109,25 @@ class DatabaseRepository():
     
 if __name__ == "__main__":
     db = DatabaseRepository()
+    # db.remove_measurement(1)
     # db.delete_measurements_table()
     # db.add_class("Basic Programming", "Marie Dewitte", "KWE.A.2.301", "06-06-2024", "8:30", "10:30", 40)
     # db.add_measurement(1, 10, 20, "10:35")
-    ac = db.query_all_classes()
-    print(ac)
+    # ac = db.query_all_classes()
+    # print(ac)
     # am = db.query_all_measurements()
     # print(am)
     # db.remove_class(1)
     # db.remove_measurement(1)
+    # db.add_class("Big Data", "Esli Heyvaert & Nathan Segers", "KWE.A.2.302", "2024-06-10", "09:30", "10:30", 40)
+    # db.add_class("Advanced Software Engineering", "Dieter De Preester", "KWE.A.1.301", "2024-06-10", "10:45", "12:45", 40)
+    # db.add_class("AI & ML", "Wouter Gevaert", "KWE.P.-1.012", "2024-06-10", "13:45", "15:45", 60)
+    # db.add_class("AI & ML", "Wouter Gevaert", "KEW.P.-1.009", "2024-06-11", "09:45", "12:45", 60)
+    # db.add_class("Big Data", "Esli Heyvaert & Nathan Segers", "KWE.A.107", "2024-06-11", "13:45", "17:45", 40)
+    # db.add_class("Monitoraat", "EVERYONE", "KWE.A.1.102", "2024-06-12", "09:30", "12:30", 70)
+    # db.add_class("Project One", "Claudia Eeckhout", "KWE.A.1.301", "2024-06-12", "13:45", "15:45", 40)
+    # db.add_class("Sensors & Interfacing", "Hans Ameel", "KWE.A.1.301", "2024-06-12", "13:45", "15:45", 40)
+    # db.add_class("Advanced Software Engineering", "Dieter De Preester & Frederik Waeyaert", "KWE.A.2.301", "2024-06-13", "13:45", "16:45", 40)
+    # db.add_class("Sensors & Interfacing", "Pieter-Jan Beeckman", "KWE.A.1.102", "2024-06-14", "08:40", "12:30", 40)
+
     db.close_connection()
