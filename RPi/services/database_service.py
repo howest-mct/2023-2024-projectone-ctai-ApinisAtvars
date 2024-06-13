@@ -26,12 +26,12 @@ class DatabaseService:
         self._repository.close_connection()
         print("connection to database closed")
     
-    def add_class(self, subject: str, teacher: str, room_number: str, date: str, start_time: str, end_time: str, number_of_students: int, line_start_X_coord = "NULL", line_start_Y_coord = "NULL", line_end_X_coord = "NULL", line_end_Y_coord = "NULL"):
-        self._repository.add_class(subject, teacher, room_number, date, start_time, end_time, number_of_students, line_start_X_coord, line_start_Y_coord, line_end_X_coord, line_end_Y_coord)
+    def add_class(self, subject: str, teacher: str, room_number: str, start_time: str, end_time: str, break_end_time: str, number_of_students: int, line_start_X_coord = "NULL", line_start_Y_coord = "NULL", line_end_X_coord = "NULL", line_end_Y_coord = "NULL"):
+        self._repository.add_class(subject, teacher, room_number, start_time, end_time, break_end_time, number_of_students, line_start_X_coord, line_start_Y_coord, line_end_X_coord, line_end_Y_coord)
         print("Class {} added!".format(subject))
     
-    def add_measurement(self, class_id: int, people_in: int, people_out: int, time: str):
-        self._repository.add_measurement(class_id, people_in, people_out, time)
+    def add_measurement(self, class_id: int, people_in: int, people_out: int, time: str, date: str):
+        self._repository.add_measurement(class_id, people_in, people_out, time, date)
     
     def query_all_classes(self) -> list:
         return self._repository.query_all_classes()
@@ -41,7 +41,7 @@ class DatabaseService:
     
     def remove_measurement(self):
         print("Select measurement to remove:\n")
-        print("Id, ClassId, PeopleIn, PeopleOut, Time")
+        print("Id, ClassId, PeopleIn, PeopleOut, Time, Date")
         for measurement in self.query_all_measurements():
             print(measurement)
         measurement_id = int(input("Enter the measurement id:"))
@@ -49,7 +49,7 @@ class DatabaseService:
     
     def remove_class(self):
         print("Select class id:\n")
-        print("ClassId, Subject, Teacher, RoomNo, Date, StartTime, EndTime, NumberOfStudents")
+        print("ClassId, Subject, Teacher, RoomNo, StartTime, EndTime, BreakEndTime, NumberOfStudents")
         for subject in self.query_all_classes():
             print(subject)
         class_id = int(input("Enter the class id:"))
@@ -57,7 +57,7 @@ class DatabaseService:
     
     def get_coordinates(self):
         print("Select class id:\n")
-        print("ClassId, Subject, Teacher, RoomNo, Date, StartTime, EndTime, NumberOfStudents")
+        print("ClassId, Subject, Teacher, RoomNo, StartTime, EndTime, BreakEndTime, NumberOfStudents")
         for subject in self.query_all_classes():
             print(subject)
         class_id = int(input("Enter the class id:"))
@@ -72,11 +72,11 @@ class DatabaseService:
     def get_last_class_id(self):
         return self._repository.get_last_class_id()
     
-    def update_measurement(self, measurement_id: int,class_id: int, people_in: int, people_out: int, time: str):
-        self._repository.update_measurement(measurement_id, class_id, people_in, people_out, time)
+    def update_measurement(self, measurement_id: int,class_id: int, people_in: int, people_out: int, time: str, date: str):
+        self._repository.update_measurement(measurement_id, class_id, people_in, people_out, time, date)
 
-    def update_class(self, class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord):
-        self._repository.update_class(class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
+    def update_class(self, class_id, subject, teacher, roomNo, startTime, endTime, breakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord):
+        self._repository.update_class(class_id, subject, teacher, roomNo, startTime, endTime, breakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
 if __name__=="__main__":
     ds = DatabaseService(DatabaseRepository())
     # print(ds.query_all_classes())

@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../r
 from sql import DatabaseRepository
 
 
-sns.set_theme(palette='pastel')
+sns.set_theme(palette='dark')
 plt.style.use("dark_background")
 
 def parse_tuple_from_string(data_str):
@@ -50,9 +50,9 @@ def create_classrooms_dataframe(classrooms: list[tuple]) -> pd.DataFrame:
         'Subject': [],
         'Teacher': [],
         'RoomNo': [],
-        'Date': [],
         'StartTime': [],
         'EndTime': [],
+        'BreakEndTime': [],
         'NumberOfStudents': [],
         'LineStartXCoord': [],
         'LineStartYCoord': [],
@@ -62,12 +62,13 @@ def create_classrooms_dataframe(classrooms: list[tuple]) -> pd.DataFrame:
 
     for row in classrooms:
         for i, entry in enumerate(row):
-            if list(data.keys())[i] == 'Date':
-                entry = datetime.strptime(entry, "%Y-%M-%d").date()
-            elif list(data.keys())[i] == 'StartTime':
+            if list(data.keys())[i] == 'StartTime':
                 entry = datetime.strptime(entry, "%H:%M").time()
             elif list(data.keys())[i] == 'EndTime':
                 entry = datetime.strptime(entry, "%H:%M").time()
+            elif list(data.keys())[i] == 'BreakEndTime':
+                if entry != 'NULL':
+                    entry = datetime.strptime(entry, "%H:%M").time()
             data[list(data.keys())[i]].append(entry)
 
     return pd.DataFrame(data)
@@ -78,12 +79,15 @@ def create_measurements_dataframe(measurements: list[tuple]) -> pd.DataFrame:
     'ClassId': [],
     'PeopleIn': [],
     'PeopleOut': [],
-    'Time': []
+    'Time': [],
+    'Date': []
     }
 
     for row in measurements:
         row_data = []
         for i, entry in enumerate(row):
+            if list(data.keys())[i] == 'Date':
+                entry = datetime.strptime(entry, "%Y-%m-%d").date()
             if list(data.keys())[i] == 'Time':
                 # Convert the time string to a datetime object
                 entry = datetime.strptime(entry, '%H:%M:%S').time()
@@ -92,8 +96,11 @@ def create_measurements_dataframe(measurements: list[tuple]) -> pd.DataFrame:
         for key, value in zip(data.keys(), row_data):
             data[key].append(value)
 
+    result = pd.DataFrame(data)  
+    result['PeopleInRoom'] = result['PeopleIn']-result['PeopleOut']
 
-    return pd.DataFrame(data)  
+
+    return result
 
 
 
@@ -149,6 +156,7 @@ elif navigation_option == 'Edit Database Entries':
 if show_classes: # The classes screen
     st.header("Classes Table")
     st.dataframe(classrooms_df, use_container_width=True)
+    st.subheader("Plot people in or people out")
     what_to_plot = st.selectbox('What do you want to create a plot of?', ['PeopleIn', 'PeopleOut'])
     classroom_id = st.selectbox('Which classroom do you want to create a plot of?', classrooms_df['ClassId'])
     plot_button = st.button("Plot this!")
@@ -170,6 +178,8 @@ if show_classes: # The classes screen
         st.pyplot(fig)
         st.text("Plotted from this Data Frame:")
         st.dataframe(filtered_measurements)
+    
+    st.subheader("Average room occupation")
 
 #############################################################
 #                   MEASUREMENTS SCREEN                     #
@@ -204,6 +214,7 @@ elif show_edit_database:
             people_in = st.text_input(label="People in", help="Needs to be an int",value=int(measurements_df[measurements_df['MeasurementId'] == measurement_id]['PeopleIn'].values[0]))
             people_out = st.text_input(label="People out", help="Needs to be an int", value=int(measurements_df[measurements_df['MeasurementId'] == measurement_id]['PeopleOut'].values[0]))
             timestamp = st.time_input(label="Time", value=measurements_df[measurements_df['MeasurementId'] == measurement_id]['Time'].values[0], step=60)
+            date = st.date_input(label="Date", value=measurements_df[measurements_df['MeasurementId'] == measurement_id]['Date'].values[0])
             commit_measurement_change = st.button("Commit measurement change")
             if commit_measurement_change == True:
                 # Try to cast to true values
@@ -213,8 +224,9 @@ elif show_edit_database:
                     people_in = int(people_in)
                     people_out = int(people_out)
                     timestamp = timestamp.strftime("%H:%M")+":00" # Need to add seconds, otherwise it won't be parsed normally
+                    date = date.strftime("%Y/%m/%d").replace("/", "-")
                     try:
-                        database.update_measurement(measurement_id, class_id, people_in, people_out, timestamp)
+                        database.update_measurement(measurement_id, class_id, people_in, people_out, timestamp, date)
                         st.success("Changes made succesfully, refresh to see them!")
                     except Exception as e:
                         st.error(f"Error while updating the database: {e}")
@@ -231,7 +243,7 @@ elif show_edit_database:
             subject = st.text_input(label="Subject", max_chars=45, value=classrooms_df[classrooms_df['ClassId'] == class_id]['Subject'].values[0])
             teacher = st.text_input(label="Teacher", max_chars=45, value=classrooms_df[classrooms_df['ClassId'] == class_id]['Teacher'].values[0])
             roomNo = st.text_input(label="Room number", max_chars=45, value=classrooms_df[classrooms_df['ClassId'] == class_id]['RoomNo'].values[0])
-            date = st.date_input(label="Date", value=classrooms_df[classrooms_df['ClassId'] == class_id]['Date'].values[0])
+            
             startTime = st.time_input(label="Start time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['StartTime'].values[0], step=900)
             endTime = st.time_input(label="End time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['EndTime'].values[0], step=900)
             numberOfStudents = st.text_input(label="Number of students", value=classrooms_df[classrooms_df['ClassId'] == class_id]['NumberOfStudents'].values[0])
@@ -242,21 +254,17 @@ elif show_edit_database:
             commit_class_change = st.button("Commit classroom entry change")
             if commit_class_change == True:
                 try:
-                    #TODO fix the line coordinates, figure something out
                     class_id = int(class_id)
-                    date = datetime.strftime(date, "%Y/%m/%d")
                     startTime = startTime.strftime("%H:%M")
                     endTime = endTime.strftime("%H:%M")
                     numberOfStudents = int(numberOfStudents)
-                    if lineStartXCoord != 'nan':
-                        lineStartXCoord = int(lineStartXCoord)
-                    else:
-                        lineStartXCoord =
-                    lineStartYCoord = int(lineStartYCoord)
-                    lineEndXCoord = int(lineEndXCoord)
-                    lineEndYCoord = int(lineEndYCoord)
+                    lineStartXCoord = int(lineStartXCoord) if lineStartXCoord != "nan" else "NULL"
+                    lineStartYCoord = int(lineStartYCoord) if lineStartYCoord != "nan" else "NULL"
+                    lineEndXCoord = int(lineEndXCoord) if lineEndXCoord != "nan" else "NULL"
+                    lineEndYCoord = int(lineEndYCoord) if lineEndYCoord != "nan" else "NULL"
+                    
                     try:
-                        database.update_class(class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
+                        database.update_class(class_id, subject, teacher, roomNo, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
                         st.success("Changes made succesfully, refresh to see them!")
                     except Exception as e:
                         st.error(f"Error while updating database: {e}")

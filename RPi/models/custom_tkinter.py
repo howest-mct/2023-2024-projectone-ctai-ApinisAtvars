@@ -44,7 +44,7 @@ class DatabaseUI():
 
         drop.pack(pady=(10, 20))
 
-        ctk.CTkLabel(self.frame, text="(ClassId, ClassName, Teacher, Room, Date, StartT, EndT, Counter line coordinates)").pack(pady = (0, 10))
+        ctk.CTkLabel(self.frame, text="(ClassId, ClassName, Teacher, Room, StartT, EndT, BreakEndT, Counter line coordinates)").pack(pady = (0, 10))
         ctk.CTkLabel(self.frame, text="Choose a class from the dropdown menu, or create a new one.").pack(pady = (0,10))
         ctk.CTkLabel(self.frame, text="Tip: If You choose an existing class, you can create a duplicate later.").pack(pady = (5,10))
 
@@ -100,10 +100,10 @@ class DatabaseUI():
         self.new_class_created_func(
             self.selected_class[1], # Subject
             self.selected_class[2], # Teacher
-            self.selected_class[3], # Room number
-            self.selected_class[4], # Date
-            self.selected_class[5], # Start Time
-            self.selected_class[6], # End Time
+            self.selected_class[3], # Room Number
+            self.selected_class[4], # Start Time
+            self.selected_class[5], # End Time
+            self.selected_class[6], # Break End Time
             self.selected_class[7], # Number of Students
         )
         self.save_line_coords = True
@@ -115,7 +115,7 @@ class DatabaseUI():
         self.destroy_and_create_frame()
 
         entries = {}
-        fields = ["Subject", "Teacher", "Room Number", "Date (YYYY-MM-DD)", "Start Time (HH:MM:SS)", "End Time (HH:MM:SS)", "Number of Students"]
+        fields = ["Subject", "Teacher", "Room Number", "Start Time (HH:MM)", "End Time (HH:MM)", "Break End Time (HH:MM)", "Number of Students"]
         for idx, field in enumerate(fields):
             ctk.CTkLabel(self.frame, text=f"{field}:").grid(row=idx, column=0, pady=5, sticky='e')
             entries[field] = ctk.CTkEntry(self.frame, width=200)
@@ -125,9 +125,9 @@ class DatabaseUI():
             entries["Subject"].get(),
             entries["Teacher"].get(),
             entries["Room Number"].get(),
-            entries["Date (YYYY-MM-DD)"].get(),
-            entries["Start Time (HH:MM:SS)"].get(),
-            entries["End Time (HH:MM:SS)"].get(),
+            entries["Start Time (HH:MM)"].get(),
+            entries["End Time (HH:MM)"].get(),
+            entries["Break End Time (HH:MM)"].get(),
             int(entries["Number of Students"].get())
         ))
         submit_button.grid(row=len(fields), column=1, pady=20)
@@ -136,11 +136,11 @@ class DatabaseUI():
                                subject,
                                teacher,
                                room,
-                               date,
                                start,
                                end,
+                               break_end,
                                student_number):
-        self.database.add_class(subject, teacher, room, date, start, end, student_number)
+        self.database.add_class(subject, teacher, room, start, end, break_end, student_number)
         self.save_line_coords = True
         self.new_class_created = True
         self.root.destroy()
