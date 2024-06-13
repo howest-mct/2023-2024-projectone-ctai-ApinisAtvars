@@ -240,28 +240,28 @@ elif show_edit_database:
             lineEndXCoord = st.text_input(label="Line end X coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineEndXCoord'].values[0])
             lineEndYCoord = st.text_input(label="Line end Y coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineEndYCoord'].values[0])
             commit_class_change = st.button("Commit classroom entry change")
-            if commit_class_change == True:
-                try:
-                    #TODO fix the line coordinates, figure something out
-                    class_id = int(class_id)
-                    date = datetime.strftime(date, "%Y/%m/%d")
-                    startTime = startTime.strftime("%H:%M")
-                    endTime = endTime.strftime("%H:%M")
-                    numberOfStudents = int(numberOfStudents)
-                    if lineStartXCoord != 'nan':
-                        lineStartXCoord = int(lineStartXCoord)
-                    else:
-                        lineStartXCoord =
-                    lineStartYCoord = int(lineStartYCoord)
-                    lineEndXCoord = int(lineEndXCoord)
-                    lineEndYCoord = int(lineEndYCoord)
-                    try:
-                        database.update_class(class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
-                        st.success("Changes made succesfully, refresh to see them!")
-                    except Exception as e:
-                        st.error(f"Error while updating database: {e}")
-                except Exception as e:
-                    st.error(f"Error while trying to cast values: {e}")
+            # if commit_class_change == True:
+                # try:
+                #     #TODO fix the line coordinates, figure something out
+                #     class_id = int(class_id)
+                #     date = datetime.strftime(date, "%Y/%m/%d")
+                #     startTime = startTime.strftime("%H:%M")
+                #     endTime = endTime.strftime("%H:%M")
+                #     numberOfStudents = int(numberOfStudents)
+                #     if lineStartXCoord != 'nan':
+                #         lineStartXCoord = int(lineStartXCoord)
+                #     else:
+                #         lineStartXCoord =
+                #     lineStartYCoord = int(lineStartYCoord)
+                #     lineEndXCoord = int(lineEndXCoord)
+                #     lineEndYCoord = int(lineEndYCoord)
+                #     try:
+                #         database.update_class(class_id, subject, teacher, roomNo, date, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
+                #         st.success("Changes made succesfully, refresh to see them!")
+                #     except Exception as e:
+                #         st.error(f"Error while updating database: {e}")
+                # except Exception as e:
+                #     st.error(f"Error while trying to cast values: {e}")
 
      
 
