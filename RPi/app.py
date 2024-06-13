@@ -12,6 +12,7 @@ import json
 from repos.sql import DatabaseRepository
 from services.database_service import DatabaseService
 from models.custom_tkinter import DatabaseUI
+from datetime import datetime
 
 ds = DatabaseService(DatabaseRepository())
 
@@ -198,8 +199,10 @@ finally:
 
     # Adding measurements to database
     class_id = ds.get_last_class_id() if databaseUI.new_class_created == True else int(databaseUI.selected_class[0])
+    date = datetime.now()
+    date = date.strftime("%Y-%m-%d")
     for number, entry in enumerate(final_data['People_in']):
-        ds.add_measurement(class_id, final_data['People_in'][number], final_data['People_out'][number], final_data['Timestamps'][number])
+        ds.add_measurement(class_id, final_data['People_in'][number], final_data['People_out'][number], final_data['Timestamps'][number], date)
     print("Measurements added")
     if databaseUI.save_line_coords == True:
         ds.change_coordinates(class_id, final_data['LineStartCoords'][0], final_data['LineStartCoords'][1], final_data['EndLineCoords'][0], final_data['EndLineCoords'][1])
