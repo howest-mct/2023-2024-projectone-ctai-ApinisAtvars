@@ -20,7 +20,7 @@ lc = LaptopClient()
 #Import the model
 
 #Medium model
-model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\train4_NEW_SMALL_VERY_GOOD\weights\best.pt")
+model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\small_final\weights\best.pt")
 
 # stream_url = 'rtsp://192.168.168.167:8554/live.sdp'
 
@@ -28,8 +28,8 @@ model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\t
 cap = cv2.VideoCapture(0)
 
 #Define the length and height of video capture
-cap.set(3, 1000)
-cap.set(4, 1000)
+cap.set(3, 1920)
+cap.set(4, 1080)
 
 #Initialize a HeadTracker object
 ht = HeadTracker()
@@ -113,11 +113,11 @@ def track_heads(all_box_coords, ht: HeadTracker):
         if counter_line_is_drawn == 1:
             try:
                 if (centroid[0] > min(start_counter_line[0], end_counter_line[0])) and (centroid[0] < max(start_counter_line[0], end_counter_line[0])): # If it's between the line's endpoints
-                    if centroid[1] > counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point: #If it's above the line and didn't use to be
+                    if centroid[1] > counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point: #If it's below the line and didn't use to be
                         number_of_people += 1
                         people_in += 1
                     else:
-                        if centroid[1] < counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point: #If it's below the line and didn't use to be
+                        if centroid[1] < counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point: #If it's above the line and didn't use to be
                             if number_of_people != 0:
                                 number_of_people -= 1
                                 people_out += 1
@@ -214,9 +214,9 @@ while True:
         for box in boxes:
             draw_bounding_box(box, img)
 
-        track_heads(all_box_coords, ht)
-        
-        all_box_coords = []
+    track_heads(all_box_coords, ht)
+    
+    all_box_coords = []
     
     if previous_number_of_people != number_of_people:
         lc.data = number_of_people

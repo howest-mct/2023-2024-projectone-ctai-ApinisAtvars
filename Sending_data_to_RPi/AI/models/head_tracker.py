@@ -4,7 +4,7 @@ from collections import OrderedDict
 import numpy as np
 
 class HeadTracker():
-    def __init__(self, maxDisappeared=24):
+    def __init__(self, maxDisappeared=12):
         
         #Counter used to assign new IDs to objects
         self.nextObjectID = 0
@@ -17,6 +17,7 @@ class HeadTracker():
 
         #Maximum number of frames that the object can be unrecognized before deleting it
         self.maxDisappeared = maxDisappeared
+
     
     def register(self, centroid):
         #Registers a new object
@@ -25,6 +26,7 @@ class HeadTracker():
 
         #Object hasn't disappeared yet, so the value set to 0
         self.disappeared[self.nextObjectID] = 0
+
 
         #Increase the nextObjectID, so that it remains unique
         self.nextObjectID += 1
@@ -59,8 +61,7 @@ class HeadTracker():
                 cX = int((startX + endX) / 2.0)
                 cY = int((startY + endY) / 2.0)
                 inputCentroids[i] = (cX, cY)
-            # if we are currently not tracking any objects take the input
-            # centroids and register each of them
+            # if we are currently not tracking any objects take the input centroids and register each of them
             if len(self.objects) == 0:
                 for i in range(0, len(inputCentroids)):
                     self.register(inputCentroids[i])
@@ -70,10 +71,8 @@ class HeadTracker():
                 # grab the set of object IDs and corresponding centroids
                 objectIDs = list(self.objects.keys())
                 objectCentroids = list(self.objects.values())
-                # compute the distance between each pair of object
-                # centroids and input centroids, respectively -- our
-                # goal will be to match an input centroid to an existing
-                # object centroid
+                # compute the distance between each pair of object centroids and input centroids, respectively -- 
+                # our goal will be to match an input centroid to an existing object centroid
                 D = dist.cdist(np.array(objectCentroids), inputCentroids)
                 # in order to perform this matching we must (1) find the smallest value in each row and then (2) sort the row
                 # indexes based on their minimum values so that the row with the smallest value is at the *front* of the index list

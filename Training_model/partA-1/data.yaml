@@ -1,0 +1,12 @@
+names:
+- 'head'
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: parta
+  url: https://universe.roboflow.com/data-rkoch/parta/dataset/1
+  version: 1
+  workspace: data-rkoch
+test: ../test/images
+train: partA-1/train/images
+val: partA-1/valid/images
