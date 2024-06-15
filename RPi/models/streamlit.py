@@ -68,7 +68,7 @@ def create_classrooms_dataframe(classrooms: list[tuple]) -> pd.DataFrame:
                 entry = datetime.strptime(entry, "%H:%M").time()
             elif list(data.keys())[i] == 'BreakEndTime':
                 if entry != 'NULL':
-                    entry = datetime.strptime(entry, "%H:%M").time()
+                    entry = str(datetime.strptime(entry, "%H:%M").time())
             data[list(data.keys())[i]].append(entry)
 
     return pd.DataFrame(data)
@@ -246,6 +246,7 @@ elif show_edit_database:
             
             startTime = st.time_input(label="Start time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['StartTime'].values[0], step=900)
             endTime = st.time_input(label="End time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['EndTime'].values[0], step=900)
+            breakEndTime = st.time_input(label="Break End Time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['BreakEndTime'].values[0], step=900)
             numberOfStudents = st.text_input(label="Number of students", value=classrooms_df[classrooms_df['ClassId'] == class_id]['NumberOfStudents'].values[0])
             lineStartXCoord = st.text_input(label="Line start X coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineStartXCoord'].values[0])
             lineStartYCoord = st.text_input(label="Line start Y coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineStartYCoord'].values[0])
@@ -257,6 +258,7 @@ elif show_edit_database:
                     class_id = int(class_id)
                     startTime = startTime.strftime("%H:%M")
                     endTime = endTime.strftime("%H:%M")
+                    breakEndTime = breakEndTime.strftime("%H:%M")
                     numberOfStudents = int(numberOfStudents)
                     lineStartXCoord = int(lineStartXCoord) if lineStartXCoord != "nan" else "NULL"
                     lineStartYCoord = int(lineStartYCoord) if lineStartYCoord != "nan" else "NULL"

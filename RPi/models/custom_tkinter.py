@@ -105,10 +105,7 @@ class DatabaseUI():
             self.selected_class[5], # End Time
             self.selected_class[6], # Break End Time
             self.selected_class[7], # Number of Students
-        )
-        self.save_line_coords = True
-
-    
+        )    
 
     def create_new_class(self):
         

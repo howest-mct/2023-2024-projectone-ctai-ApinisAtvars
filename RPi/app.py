@@ -208,3 +208,9 @@ finally:
         ds.change_coordinates(class_id, final_data['LineStartCoords'][0], final_data['LineStartCoords'][1], final_data['EndLineCoords'][0], final_data['EndLineCoords'][1])
         print("Class coordinates added")
     
+    # command_to_run_ui = ["streamlit", "run", "/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/models/streamlit.py"]
+    # result = subprocess.run(command_to_run_ui, capture_output=True, text=True)
+    # process = subprocess.Popen(command_to_run_ui)
+    # print(result.stdout)
+    # print(result.stderr)
+    
