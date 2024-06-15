@@ -1,3 +1,7 @@
+import cv2
+import numpy as np
+
+
 class KalmanFilter:
     def __init__(self):
         self.kalman = cv2.KalmanFilter(4, 2)

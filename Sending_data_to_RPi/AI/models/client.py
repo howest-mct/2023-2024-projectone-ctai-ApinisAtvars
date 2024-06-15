@@ -23,22 +23,6 @@ class LaptopClient:
         
         self.HEADERSIZE = 10
 
-    # def send_final_data(self):
-    #     final_data = {
-    #         'people_in': self.people_in,
-    #         'people_out': self.people_out,
-    #         'timestamps': self.timestamps
-    #     }
-    #     final_data_json = json.dumps(final_data)
-    #     try:
-    #         # Send the keyword indicating final data
-    #         self.client_socket.sendall("final_data".encode())
-    #         time.sleep(0.1)  # Slight delay to ensure the server processes the keyword first
-    #         # Send the actual final data
-    #         self.client_socket.sendall(final_data_json.encode())
-    #     except Exception as e:
-    #         print(f"Failed to send final data: {e}")
-
     def setup_socket_client(self):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # create a socket instance
         self.client_socket.connect(self.server_address) # connect to specified server
@@ -61,8 +45,6 @@ class LaptopClient:
             except socket.timeout:
                 continue
         
-    
-
 
     def main(self):
         self.setup_socket_client()

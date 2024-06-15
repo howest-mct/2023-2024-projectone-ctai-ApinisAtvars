@@ -5,7 +5,6 @@ import os
 
 class DatabaseRepository():
     def __init__(self) -> None:
-        # self.path_to_db = str(sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../databases/occupation_meter.db'))))
         self.path_to_db = r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/databases/occupation_meter.db"
         self.con = sqlite3.connect(database=self.path_to_db)
         
