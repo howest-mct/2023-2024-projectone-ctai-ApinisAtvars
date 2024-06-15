@@ -114,7 +114,7 @@ def handle_client(sock, shutdown_flag):
 
 
 def write_to_csv(number_of_people):
-    filename = "/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/Sending_data_to_RPi/RPi/Files/{}.csv".format(time.strftime("%Y-%m-%d"))
+    filename = "/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/files/{}.csv".format(time.strftime("%Y-%m-%d"))
     #If a file like this^ exists, a header is not written
     if os.path.isfile(filename):
         with open(filename, "a", newline="") as csvfile: # Append to the file, set newline to empty string, because writerow() automatically appends a newline character
