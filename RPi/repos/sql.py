@@ -108,7 +108,8 @@ class DatabaseRepository():
         query = self.cur.execute("SELECT max(ClassID) from class")
         return int(query.fetchone()[0])
     
-        
+    def insert_dummy_measurement_data(self):
+        pass
     
 if __name__ == "__main__":
     db = DatabaseRepository()
@@ -135,7 +136,7 @@ if __name__ == "__main__":
     # db.add_class("Sensors & Interfacing", "Hans Ameel", "KWE.A.1.301", "13:45", "15:45", "14:55", 40)
     # db.add_class("Advanced Software Engineering", "Dieter De Preester & Frederik Waeyaert", "KWE.A.2.301", "13:45", "16:45", "15:10", 40)
     # db.add_class("Sensors & Interfacing", "Pieter-Jan Beeckman", "KWE.A.1.102", "08:30", "12:30", "10:40", 40, 400, 200, 600, 200)
-    # print(db.query_all_classes())
+    print(db.query_all_classes())
     # print(db.query_all_measurements())
 
     db.close_connection()
