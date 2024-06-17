@@ -7,6 +7,6 @@ roboflow:
   url: https://universe.roboflow.com/classroom-occupation-meter/classroom-occupation-meter/dataset/7
   version: 7
   workspace: classroom-occupation-meter
-test: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\First_model_test\Classroom-Occupation-Meter-7\test\images
-train: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\First_model_test\Classroom-Occupation-Meter-7\train\images
-val: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\First_model_test\Classroom-Occupation-Meter-7\valid\images
+test: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\Training_model\Classroom-Occupation-Meter-7\test\images
+train: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\Training_model\Classroom-Occupation-Meter-7\train\images
+val: D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\Training_model\Classroom-Occupation-Meter-7\valid\images

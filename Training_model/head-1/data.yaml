@@ -1,0 +1,12 @@
+names:
+- head
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: head-l6mf2
+  url: https://universe.roboflow.com/head-h9nwx/head-l6mf2/dataset/1
+  version: 1
+  workspace: head-h9nwx
+test: ../test/images
+train: head-1/train/images
+val: head-1/valid/images
