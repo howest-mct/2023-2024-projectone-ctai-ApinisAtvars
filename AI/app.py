@@ -42,11 +42,11 @@ end_counter_line = []
 counter_line_middle_point = -1  # Mean height of counter line
 counter_line_is_drawn = 0
 
-frame_threshold = 12 # The number of frames that the head needs to be on the other side of the classroom so that the number of people changes
-crossing_counter = {} # Dict for checking how long since head crossed counter line
 
 kalman_filters = {}
 on_screen_for = {}
+
+
 
 def parse_tuple_from_string(data_str): # Simple function for parsing a tuple from a string
     data_str = data_str.strip('()')
@@ -67,8 +67,12 @@ def mb_click(event, x, y, flags, param): # Callback function for drawing the cou
                 start_counter_line = [x, y]
 
 
+crossing_counter = {}
+frame_threshold = 12
+
+
 def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each bounding box    
-    global number_of_people, people_in, people_out, crossing_counter
+    global number_of_people, people_in, people_out, on_screen_for, crossing_counter, frame_threshold
 
     objects = ht.update(all_box_coords) # Update centroid coordinates
 
@@ -79,7 +83,6 @@ def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each boun
             kalman_filters[objectID].correct(centroid[0], centroid[1])
             previous_centroid_coords[objectID] = (centroid[0], centroid[1])  # Initialize the previous centroid coords
             on_screen_for[objectID] = 0
-            crossing_counter[objectID] = 0
 
 
 
@@ -91,32 +94,46 @@ def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each boun
 
         if on_screen_for[objectID] > 5: # If the centroid has been on the screen for more than 5 frames, display it
 
-            text = f"ID {objectID}"
-            cv2.putText(img, text, (predicted_centroid[0], predicted_centroid[1]),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            cv2.circle(img, predicted_centroid, 4, (0, 255, 0), -1)
+            # text = f"ID {objectID}"
+            # cv2.putText(img, text, (predicted_centroid[0], predicted_centroid[1]),
+            #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.circle(img, predicted_centroid, 4, (255, 153, 255), -1)
 
             if counter_line_is_drawn == 1:
                 try:
                     # If it's between the lines end points (horizontally)
                     if (predicted_centroid[0] > min(start_counter_line[0], end_counter_line[0])) and (predicted_centroid[0] < max(start_counter_line[0], end_counter_line[0])):
                         # If it's below or on the counter line (vertically), and used to be above it
-                        if predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point:
-                            crossing_counter[objectID] += 1
-                            if crossing_counter[objectID] >= frame_threshold:
-                                number_of_people += 1
-                                people_in += 1
-                                crossing_counter[objectID] = 0  # Reset the counter
-
-                        # If it's above or on the counter line (vertically), and used to be below it
-                        elif predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point:
-                            crossing_counter[objectID] += 1
-                            if number_of_people != 0:
-                                number_of_people -= 1
-                                people_out += 1
-                                crossing_counter[objectID] = 0  # Reset the counter
+                        if objectID not in crossing_counter.keys() or crossing_counter[objectID] == None:
+                            if predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point:
+                                crossing_counter[objectID] = 0
+                                print(crossing_counter)
+                                # number_of_people += 1
+                                # people_in += 1
+                            # If it's above or on the counter line (vertically), and used to be below it
+                            elif predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point:
+                                crossing_counter[objectID] = 0
+                                print(crossing_counter)
+                                # if number_of_people != 0:
+                                #     number_of_people -= 1
+                                #     people_out += 1
                         else:
-                            crossing_counter[objectID] = 0  # Reset the counter if the direction is reversed or it didn't cross
+                            #if                 a head is above the counter line        and used to be above it                                           or    vice versa
+                            if (predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point) or (predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point):
+                                crossing_counter[objectID] += 1
+                                print(crossing_counter)
+                                if crossing_counter[objectID] >= frame_threshold:
+                                    if predicted_centroid[1] >= counter_line_middle_point:
+                                        number_of_people += 1
+                                        people_in += 1
+                                        crossing_counter[objectID] = None
+                                    else:
+                                        if number_of_people != 0:
+                                            number_of_people -= 1
+                                        people_out += 1
+                                        crossing_counter[objectID] = None
+                            else:
+                                crossing_counter[objectID] = None# otherwise reset
                 except Exception:
                     continue
 
@@ -128,10 +145,10 @@ def draw_bounding_box(box, img): # Draws bounding box of centroids
     x1, y1, x2, y2 = map(int, box.xyxy[0])
     box_coords = (x1, y1, x2, y2)
     all_box_coords.append(box_coords)
-    cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3) # Change the 3 number tuple to change color
+    cv2.rectangle(img, (x1, y1), (x2, y2), (255, 153, 255), 3) # Change the 3 number tuple to change color
     confidence = math.ceil(box.conf[0] * 100) / 100
     org = [x1, y1]
-    cv2.putText(img, f"Head {confidence}", org, cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2) # Same here
+    cv2.putText(img, f"Head {confidence}", org, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 128, 0), 2) # Same here
 
 lc.setup_socket_client()
 
@@ -211,12 +228,12 @@ while True:
         timestamps.append(time.strftime("%H:%M:%S"))
 
     if counter_line_is_drawn == 1: # If the line is drawn, display it
-        cv2.line(img, start_counter_line, end_counter_line, (0, 255, 0), 2)
+        cv2.line(img, start_counter_line, end_counter_line, (153, 255, 204), 2)
     else: # Otherwise, tell the user to draw it
-        cv2.putText(img, "Draw counter line", (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+        cv2.putText(img, "Draw counter line", (20, 80), cv2.FONT_HERSHEY_TRIPLEX, 1, (102, 102, 255), 2)
 
     # Display the number of people
-    cv2.putText(img, "People: {}".format(str(number_of_people)), (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    cv2.putText(img, "People: {}".format(str(number_of_people)), (40, 45), cv2.FONT_HERSHEY_TRIPLEX, 2, (153, 255, 255), 2)
     cv2.imshow("Webcam", img) # Show the frame
 
     if cv2.waitKey(1) == ord('q'):
