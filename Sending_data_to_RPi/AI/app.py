@@ -218,4 +218,3 @@ lc.client_socket.close()
 lc.receive_thread.join()
 cap.release()
 cv2.destroyAllWindows()
- 
