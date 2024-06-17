@@ -53,6 +53,7 @@ class DatabaseRepository():
         self.con.close()
     
     def add_class(self, subject: str, teacher: str, room_number: str, start_time: str, end_time: str, break_end_time: str, number_of_students: int, line_start_X_coord = "NULL", line_start_Y_coord = "NULL", line_end_X_coord = "NULL", line_end_Y_coord = "NULL"):
+        break_end_time = break_end_time if break_end_time != "" else "NULL"
         command = "INSERT INTO class (Subject, Teacher, RoomNo, StartTime, EndTime, BreakEndTime, NumberOfStudents, LineStartXCoord, LineStartYCoord, LineEndXCoord, LineEndYCoord) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, {}, {}, {})".format(subject, teacher, room_number, start_time, end_time, break_end_time, number_of_students, line_start_X_coord, line_start_Y_coord, line_end_X_coord, line_end_Y_coord)
         self.cur.execute(command)
         self.con.commit()
@@ -88,8 +89,9 @@ class DatabaseRepository():
         self.cur.execute(command)
         self.con.commit()
     
-    def update_class(self, class_id, subject, teacher, roomNo, startTime, endTime, BreakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord):
-        command = "UPDATE class SET Subject = {}, Teacher = {}, RoomNo = '{}', StartTime = '{}', EndTime = '{}', BreakEndTime = '{}', NumberOfStudents = {}, LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {};".format(subject, teacher, roomNo, startTime, endTime, BreakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord, class_id)
+    def update_class(self, class_id, subject, teacher, roomNo, startTime, endTime, breakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord):
+        breakEndTime = breakEndTime if breakEndTime != "" else "NULL"
+        command = "UPDATE class SET Subject = '{}', Teacher = '{}', RoomNo = '{}', StartTime = '{}', EndTime = '{}', BreakEndTime = '{}', NumberOfStudents = {}, LineStartXCoord = {}, LineStartYCoord = {}, LineEndXCoord = {}, LineEndYCoord = {} WHERE ClassID = {};".format(subject, teacher, roomNo, startTime, endTime, breakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord, class_id)
         self.cur.execute(command)
         self.con.commit()
    
@@ -110,7 +112,9 @@ class DatabaseRepository():
     
 if __name__ == "__main__":
     db = DatabaseRepository()
+    # db.update_class(1, "a", "a", "a", "a", "a", "a", 30, "NULL", "NULL", "NULL", "NULL")
     # db.remove_measurement(1)
+    # db.remove_class(1)
     # db.delete_measurements_table()
     # db.delete_class_table()
     # db.add_class("Basic Programming", "Marie Dewitte", "KWE.A.2.301", "06-06-2024", "8:30", "10:30", 40)
@@ -119,7 +123,7 @@ if __name__ == "__main__":
     # print(ac)
     # am = db.query_all_measurements()
     # print(am)
-    # db.remove_class(1)
+    # db.remove_class(13)
     # db.remove_measurement(1)
     # db.add_class("Big Data", "Esli Heyvaert & Nathan Segers", "KWE.A.2.302", "09:30", "10:30", "NULL", 40)
     # db.add_class("Advanced Software Engineering", "Dieter De Preester", "KWE.A.1.301", "10:45", "12:45", "11:55", 40)
@@ -131,7 +135,7 @@ if __name__ == "__main__":
     # db.add_class("Sensors & Interfacing", "Hans Ameel", "KWE.A.1.301", "13:45", "15:45", "14:55", 40)
     # db.add_class("Advanced Software Engineering", "Dieter De Preester & Frederik Waeyaert", "KWE.A.2.301", "13:45", "16:45", "15:10", 40)
     # db.add_class("Sensors & Interfacing", "Pieter-Jan Beeckman", "KWE.A.1.102", "08:30", "12:30", "10:40", 40, 400, 200, 600, 200)
-    print(db.query_all_classes())
+    # print(db.query_all_classes())
     # print(db.query_all_measurements())
 
     db.close_connection()

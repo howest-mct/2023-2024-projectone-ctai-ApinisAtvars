@@ -18,7 +18,6 @@ from sql import DatabaseRepository
 
 
 sns.set_theme(palette='dark')
-plt.style.use("dark_background")
 
 def parse_tuple_from_string(data_str):
     # Remove the surrounding parentheses
@@ -62,13 +61,17 @@ def create_classrooms_dataframe(classrooms: list[tuple]) -> pd.DataFrame:
 
     for row in classrooms:
         for i, entry in enumerate(row):
-            if list(data.keys())[i] == 'StartTime':
+            key = list(data.keys())[i]
+            # if list(data.keys())[i] == 'StartTime':
+            #     entry = datetime.strptime(entry, "%H:%M").time()
+            # elif list(data.keys())[i] == 'EndTime':
+            #     entry = datetime.strptime(entry, "%H:%M").time()
+            # elif list(data.keys())[i] == 'BreakEndTime':
+                # entry = str(datetime.strptime(entry, "%H:%M").time()) if entry != "NULL" else entry
+            if key in ['StartTime', 'EndTime', 'BreakEndTime'] and entry != "NULL":
                 entry = datetime.strptime(entry, "%H:%M").time()
-            elif list(data.keys())[i] == 'EndTime':
-                entry = datetime.strptime(entry, "%H:%M").time()
-            elif list(data.keys())[i] == 'BreakEndTime':
-                if entry != 'NULL':
-                    entry = str(datetime.strptime(entry, "%H:%M").time())
+            elif key == 'BreakEndTime' and entry == "NULL":
+                entry = None
             data[list(data.keys())[i]].append(entry)
 
     return pd.DataFrame(data)
@@ -102,8 +105,71 @@ def create_measurements_dataframe(measurements: list[tuple]) -> pd.DataFrame:
 
     return result
 
+def get_post_break_attendance_rate(metric, classrooms_df: pd.DataFrame, measurements_df):
+        # Remove classes where there is no break
+        classrooms_df = classrooms_df[classrooms_df['BreakEndTime']!=None]
+        # Merge dataframes on ClassId
+        merged_df = pd.merge(classrooms_df, measurements_df, on='ClassId')
+        
+        if metric in classrooms_df['Teacher'].unique():
+            # Filter data for the specific teacher
+            filtered_df = merged_df[merged_df['Teacher'] == metric]
+        else:
+            filtered_df = merged_df[merged_df['Subject'] == metric]
+            
+        rates = []
+        for class_id, group in filtered_df.groupby('ClassId'):
+            break_end_time = group['BreakEndTime'].iloc[0]
+            
+            if break_end_time is not None:
+                # Filter measurements before and after the break
+                before_break = group[group['Time'] <= break_end_time]
+                after_break = group[group['Time'] > break_end_time]
+                
+                if not before_break.empty and not after_break.empty:
+                    max_students_before_break = before_break['PeopleInRoom'].max()
+                    max_students_after_break = after_break['PeopleInRoom'].max()
+                    
+                    if max_students_before_break > 0:
+                        post_break_attendance_rate = (max_students_after_break / max_students_before_break) * 100
+                        rates.append(post_break_attendance_rate)
+        
+        if rates:
+            return round(sum(rates) / len(rates), 0)  # Return average post-break attendance rate
+        else:
+            return None  # No data available
+
+def get_average_per_room(classroom: str, start_period, end_period, classrooms_df: pd.DataFrame, measurements_df: pd.DataFrame):
+    start_period = pd.to_datetime(start_period) # Cast to pandas specific datetime
+    end_period = pd.to_datetime(end_period) # Same here
+
+    merged_df = pd.merge(classrooms_df, measurements_df, on='ClassId')# Merge dataframes on ClassId
+    merged_df = merged_df[merged_df['RoomNo']==classroom] # Filter out the classroom
+    
+    merged_df['Date'] = pd.to_datetime(merged_df['Date'])# Filter out the dates
+    merged_df = merged_df[(merged_df['Date']>=start_period)&(merged_df['Date']<=end_period)] # Get only the values between the dates
+    # Add 'Weekday' column which is the day of the week
+    merged_df['Weekday'] = merged_df['Date'].dt.day_name()
+    
+    # Group by Date to get the maximum 'PeopleInRoom' for each day
+    max_people_per_day = merged_df.groupby('Date')['PeopleInRoom'].max().reset_index()
+
+    # Add 'Weekday' column to the grouped DataFrame
+    max_people_per_day['Weekday'] = max_people_per_day['Date'].dt.day_name()
+
+    # Group by Weekday and calculate the average of the maximum values
+    average_max_people_per_weekday = max_people_per_day.groupby('Weekday')['PeopleInRoom'].mean().reset_index()
+
+    # Sort the DataFrame by the order of the weekdays
+    weekday_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    average_max_people_per_weekday['Weekday'] = pd.Categorical(average_max_people_per_weekday['Weekday'], categories=weekday_order, ordered=True)
+    average_max_people_per_weekday = average_max_people_per_weekday.sort_values('Weekday').reset_index(drop=True)
+
+    # Display the resulting DataFrame
+    st.dataframe(average_max_people_per_weekday)
 
 
+        
 database = DatabaseService(DatabaseRepository())
 all_classrooms = database.query_all_classes()
 all_measurements = database.query_all_measurements()
@@ -150,6 +216,31 @@ elif navigation_option == 'Edit Database Entries':
     show_home = False
 
 #############################################################
+#                       HOME SCREEN                         #
+#############################################################
+
+if show_home:
+    st.header("Home")
+    st.subheader("Post-Break Attendance Rate Per Teacher")
+    teacher_name = st.selectbox("Select a teacher:", classrooms_df['Teacher'].unique())
+    pbar_teacher = get_post_break_attendance_rate(teacher_name, classrooms_df, measurements_df)
+    st.metric(f"Post-Break Attendance Rate For Teacher {teacher_name}",value= f"{pbar_teacher} %", help="Percentage of attendants that stay after the break")
+
+    st.subheader("Post-Break Attendance Rate Per Subject")
+    subject_name = st.selectbox("Select a subject:", classrooms_df['Subject'].unique())
+    pbar_subject = get_post_break_attendance_rate(subject_name, classrooms_df, measurements_df)
+    st.metric(f"Post-Break Attendance Rate For Subject {subject_name}",value= f"{pbar_subject} %", help="Percentage of attendants that stay after the break")
+
+    st.subheader("Average number of people in room per day")
+    room_name = st.selectbox("Select a classroom:", classrooms_df['RoomNo'].unique())
+    start_date = st.date_input("Select the start date (Inclusive):")
+    end_date = st.date_input("Select the end date (Exclusive):", min_value=start_date)
+    get_average_per_room(room_name, start_date, end_date, classrooms_df, measurements_df)
+
+
+
+
+#############################################################
 #                     CLASSES SCREEN                        #
 #############################################################
 
@@ -157,7 +248,7 @@ if show_classes: # The classes screen
     st.header("Classes Table")
     st.dataframe(classrooms_df, use_container_width=True)
     st.subheader("Plot people in or people out")
-    what_to_plot = st.selectbox('What do you want to create a plot of?', ['PeopleIn', 'PeopleOut'])
+    what_to_plot = st.selectbox('What do you want to create a plot of?', ['PeopleIn', 'PeopleOut', 'PeopleInRoom'])
     classroom_id = st.selectbox('Which classroom do you want to create a plot of?', classrooms_df['ClassId'])
     plot_button = st.button("Plot this!")
 
@@ -246,7 +337,8 @@ elif show_edit_database:
             
             startTime = st.time_input(label="Start time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['StartTime'].values[0], step=900)
             endTime = st.time_input(label="End time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['EndTime'].values[0], step=900)
-            breakEndTime = st.time_input(label="Break End Time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['BreakEndTime'].values[0], step=900)
+            set_break_time = st.checkbox("Break End Time is not NULL", value="Yes")
+            breakEndTime = st.time_input(label="Break End Time", value=classrooms_df[classrooms_df['ClassId'] == class_id]['BreakEndTime'].values[0], step=900) if set_break_time else "NULL"
             numberOfStudents = st.text_input(label="Number of students", value=classrooms_df[classrooms_df['ClassId'] == class_id]['NumberOfStudents'].values[0])
             lineStartXCoord = st.text_input(label="Line start X coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineStartXCoord'].values[0])
             lineStartYCoord = st.text_input(label="Line start Y coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineStartYCoord'].values[0])
@@ -258,7 +350,7 @@ elif show_edit_database:
                     class_id = int(class_id)
                     startTime = startTime.strftime("%H:%M")
                     endTime = endTime.strftime("%H:%M")
-                    breakEndTime = breakEndTime.strftime("%H:%M")
+                    breakEndTime = breakEndTime.strftime("%H:%M") if breakEndTime != "NULL" else breakEndTime
                     numberOfStudents = int(numberOfStudents)
                     lineStartXCoord = int(lineStartXCoord) if lineStartXCoord != "nan" else "NULL"
                     lineStartYCoord = int(lineStartYCoord) if lineStartYCoord != "nan" else "NULL"
@@ -266,7 +358,7 @@ elif show_edit_database:
                     lineEndYCoord = int(lineEndYCoord) if lineEndYCoord != "nan" else "NULL"
                     
                     try:
-                        database.update_class(class_id, subject, teacher, roomNo, startTime, endTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
+                        database.update_class(class_id, subject, teacher, roomNo, startTime, endTime, breakEndTime, numberOfStudents, lineStartXCoord, lineStartYCoord, lineEndXCoord, lineEndYCoord)
                         st.success("Changes made succesfully, refresh to see them!")
                     except Exception as e:
                         st.error(f"Error while updating database: {e}")

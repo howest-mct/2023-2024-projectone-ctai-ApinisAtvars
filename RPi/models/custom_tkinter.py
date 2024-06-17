@@ -112,7 +112,7 @@ class DatabaseUI():
         self.destroy_and_create_frame()
 
         entries = {}
-        fields = ["Subject", "Teacher", "Room Number", "Start Time (HH:MM)", "End Time (HH:MM)", "Break End Time (HH:MM)", "Number of Students"]
+        fields = ["Subject", "Teacher", "Room Number", "Start Time (HH:MM)", "End Time (HH:MM)", "Break End Time (HH:MM) (If no break, leave empty)", "Number of Students"]
         for idx, field in enumerate(fields):
             ctk.CTkLabel(self.frame, text=f"{field}:").grid(row=idx, column=0, pady=5, sticky='e')
             entries[field] = ctk.CTkEntry(self.frame, width=200)
@@ -124,7 +124,7 @@ class DatabaseUI():
             entries["Room Number"].get(),
             entries["Start Time (HH:MM)"].get(),
             entries["End Time (HH:MM)"].get(),
-            entries["Break End Time (HH:MM)"].get(),
+            entries["Break End Time (HH:MM) (If no break, leave empty)"].get(),
             int(entries["Number of Students"].get())
         ))
         submit_button.grid(row=len(fields), column=1, pady=20)
