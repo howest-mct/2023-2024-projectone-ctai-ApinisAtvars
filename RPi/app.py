@@ -251,3 +251,4 @@ finally:
     finally:
         stdout_thread.join()
         stderr_thread.join()
+        databaseUI.database.close_connection()
