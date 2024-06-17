@@ -42,6 +42,8 @@ end_counter_line = []
 counter_line_middle_point = -1  # Mean height of counter line
 counter_line_is_drawn = 0
 
+frame_threshold = 12 # The number of frames that the head needs to be on the other side of the classroom so that the number of people changes
+crossing_counter = {} # Dict for checking how long since head crossed counter line
 
 kalman_filters = {}
 on_screen_for = {}
@@ -66,7 +68,7 @@ def mb_click(event, x, y, flags, param): # Callback function for drawing the cou
 
 
 def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each bounding box    
-    global number_of_people, people_in, people_out
+    global number_of_people, people_in, people_out, crossing_counter
 
     objects = ht.update(all_box_coords) # Update centroid coordinates
 
@@ -77,6 +79,7 @@ def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each boun
             kalman_filters[objectID].correct(centroid[0], centroid[1])
             previous_centroid_coords[objectID] = (centroid[0], centroid[1])  # Initialize the previous centroid coords
             on_screen_for[objectID] = 0
+            crossing_counter[objectID] = 0
 
 
 
@@ -99,13 +102,21 @@ def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each boun
                     if (predicted_centroid[0] > min(start_counter_line[0], end_counter_line[0])) and (predicted_centroid[0] < max(start_counter_line[0], end_counter_line[0])):
                         # If it's below or on the counter line (vertically), and used to be above it
                         if predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point:
-                            number_of_people += 1
-                            people_in += 1
+                            crossing_counter[objectID] += 1
+                            if crossing_counter[objectID] >= frame_threshold:
+                                number_of_people += 1
+                                people_in += 1
+                                crossing_counter[objectID] = 0  # Reset the counter
+
                         # If it's above or on the counter line (vertically), and used to be below it
                         elif predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point:
+                            crossing_counter[objectID] += 1
                             if number_of_people != 0:
                                 number_of_people -= 1
                                 people_out += 1
+                                crossing_counter[objectID] = 0  # Reset the counter
+                        else:
+                            crossing_counter[objectID] = 0  # Reset the counter if the direction is reversed or it didn't cross
                 except Exception:
                     continue
 

@@ -100,7 +100,7 @@ def create_measurements_dataframe(measurements: list[tuple]) -> pd.DataFrame:
             data[key].append(value)
 
     result = pd.DataFrame(data)  
-    result['PeopleInRoom'] = result['PeopleIn']-result['PeopleOut']
+    result['PeopleInRoom'] = (result['PeopleIn']-result['PeopleOut']).clip(lower=0) # Make sure there are no negative values
 
 
     return result

@@ -1,7 +1,9 @@
 import sqlite3
 import sys
 import os
-
+import random
+import pandas as pd
+import numpy as np
 
 class DatabaseRepository():
     def __init__(self) -> None:
@@ -109,7 +111,28 @@ class DatabaseRepository():
         return int(query.fetchone()[0])
     
     def insert_dummy_measurement_data(self):
-        pass
+        # classroom_ids_unformatted = self.cur.execute("SELECT ClassID from class")
+        # classroom_ids_unformatted = classroom_ids_unformatted.fetchall()
+        # classroom_ids = [x[0] for x in classroom_ids_unformatted]
+        # classroom_ids = [random.choice(classroom_ids) for _ in range(20)]
+        # print(classroom_ids)
+        # classrooms = self.query_all_classes()
+        classes = self.query_all_classes()
+        class_df = pd.DataFrame(classes, columns=["ClassID", "Subject", "Teacher", "RoomNo", "StartTime", "EndTime", "BreakEndTime", "NumberOfStudents", "LineStartXCoord", "LineStartYCoord", "LineEndXCoord", "LineEndYCoord"])
+
+        dates = pd.date_range(start="2024-06-10", end="2024-06-14")
+        # Create measurements
+        np.random.seed(0)  # For reproducible results
+
+        for date in dates:
+            date = str(date.date())
+            for class_id in class_df["ClassID"]:
+                for i in range(40):
+                    people_in = np.random.randint(0, class_df[class_df["ClassID"] == class_id]["NumberOfStudents"].values[0] + 1)
+                    people_out = np.random.randint(0, people_in + 1)  # Ensure people_out <= people_in
+                    time = f"{np.random.randint(0, 24):02}:{np.random.randint(0, 60):02}:{np.random.randint(0, 60):02}"  # Random time in HH:MM:SS format
+            # print((class_id, people_in, people_out, time, date))
+                    self.add_measurement(class_id, people_in, people_out, time, date)
     
 if __name__ == "__main__":
     db = DatabaseRepository()
@@ -124,7 +147,7 @@ if __name__ == "__main__":
     # print(ac)
     # am = db.query_all_measurements()
     # print(am)
-    # db.remove_class(13)
+    # db.remove_class(15)
     # db.remove_measurement(1)
     # db.add_class("Big Data", "Esli Heyvaert & Nathan Segers", "KWE.A.2.302", "09:30", "10:30", "NULL", 40)
     # db.add_class("Advanced Software Engineering", "Dieter De Preester", "KWE.A.1.301", "10:45", "12:45", "11:55", 40)
@@ -136,7 +159,8 @@ if __name__ == "__main__":
     # db.add_class("Sensors & Interfacing", "Hans Ameel", "KWE.A.1.301", "13:45", "15:45", "14:55", 40)
     # db.add_class("Advanced Software Engineering", "Dieter De Preester & Frederik Waeyaert", "KWE.A.2.301", "13:45", "16:45", "15:10", 40)
     # db.add_class("Sensors & Interfacing", "Pieter-Jan Beeckman", "KWE.A.1.102", "08:30", "12:30", "10:40", 40, 400, 200, 600, 200)
-    print(db.query_all_classes())
+    # print(db.query_all_classes())
+    # db.insert_dummy_measurement_data()
     # print(db.query_all_measurements())
 
     db.close_connection()
