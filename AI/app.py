@@ -16,7 +16,7 @@ from models.KalmanFilter import KalmanFilter
 lc = LaptopClient()
 
 # Import the model
-model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\small_final\weights\best.pt")
+model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\small_final_FINAL\weights\best.pt")
 
 # Start video capture
 cap = cv2.VideoCapture(0)

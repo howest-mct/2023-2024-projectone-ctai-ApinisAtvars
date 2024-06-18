@@ -2,7 +2,9 @@ import cv2
 import math
 from ultralytics import YOLO
 
-model = YOLO(r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/runs/detect/train2/weights/best.pt")
+# model = YOLO(r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/runs/detect/train2/weights/best.pt")
+model = YOLO(r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\runs\detect\small_final_FINAL\weights\best.pt")
+
 
 class_names = ["head"]
 
