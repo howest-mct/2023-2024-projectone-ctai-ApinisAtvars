@@ -250,17 +250,19 @@ if show_classes: # The classes screen
     st.subheader("Plot people in or people out")
     what_to_plot = st.selectbox('What do you want to create a plot of?', ['PeopleIn', 'PeopleOut', 'PeopleInRoom'])
     classroom_id = st.selectbox('Which classroom do you want to create a plot of?', classrooms_df['ClassId'])
+    date = st.date_input("Select the date:", value='today')
     plot_button = st.button("Plot this!")
 
 
 
     if plot_button: # If you press the plot this button
         filtered_measurements = measurements_df[measurements_df['ClassId'] == classroom_id]
+        filtered_measurements = filtered_measurements[filtered_measurements['Date'] == date]
         fig, ax = plt.subplots()
         timestamps = [str(x) for x in filtered_measurements['Time']]
         # x_ticks = select_10_equally_spaced_items(timestamps)
         # Set x-ticks limit
-        sns.scatterplot(data = filtered_measurements, x=timestamps, y=what_to_plot)
+        sns.lineplot(data = filtered_measurements, x=timestamps, y=what_to_plot)
         # plt.xticks(timestamps, x_ticks)
         plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=5))
         ax.set_title(f"{what_to_plot} for ClassId {classroom_id}")
@@ -270,8 +272,6 @@ if show_classes: # The classes screen
         st.text("Plotted from this Data Frame:")
         st.dataframe(filtered_measurements)
     
-    st.subheader("Average room occupation")
-
 #############################################################
 #                   MEASUREMENTS SCREEN                     #
 #############################################################
@@ -307,6 +307,17 @@ elif show_edit_database:
             timestamp = st.time_input(label="Time", value=measurements_df[measurements_df['MeasurementId'] == measurement_id]['Time'].values[0], step=60)
             date = st.date_input(label="Date", value=measurements_df[measurements_df['MeasurementId'] == measurement_id]['Date'].values[0])
             commit_measurement_change = st.button("Commit measurement change")
+
+            # Use the st.button to handle the action
+            if st.button('Delete measurement'):
+                try:
+                    print(measurement_id)
+                    database.remove_measurement(measurement_id)
+                    st.success('Measurement deleted!')
+                except Exception as e:
+                    st.error(f"Error while trying to delete entry: {e}")
+            
+
             if commit_measurement_change == True:
                 # Try to cast to true values
                 try:
@@ -345,6 +356,14 @@ elif show_edit_database:
             lineEndXCoord = st.text_input(label="Line end X coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineEndXCoord'].values[0])
             lineEndYCoord = st.text_input(label="Line end Y coordinate", value=classrooms_df[classrooms_df['ClassId'] == class_id]['LineEndYCoord'].values[0])
             commit_class_change = st.button("Commit classroom entry change")
+            delete_classroom = st.button("Delete classroom")
+
+            if delete_classroom:
+                try:
+                    database.remove_class(class_id)
+                    st.success("Succesfully deleted classroom!")
+                except Exception as e:
+                    st.error(f"Error while deleting classroom: {e}")
             if commit_class_change == True:
                 try:
                     class_id = int(class_id)

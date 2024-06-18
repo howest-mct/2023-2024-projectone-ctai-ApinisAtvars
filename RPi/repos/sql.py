@@ -8,6 +8,7 @@ import numpy as np
 class DatabaseRepository():
     def __init__(self) -> None:
         self.path_to_db = r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/databases/occupation_meter.db"
+        # self.path_to_db = r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\RPi\databases\occupation_meter.db"
         self.con = sqlite3.connect(database=self.path_to_db)
         
         self.cur = self.con.cursor() # Create Cursor
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     # print(am)
     # db.remove_class(15)
     # db.remove_measurement(1)
-    # db.add_class("Big Data", "Esli Heyvaert & Nathan Segers", "KWE.A.2.302", "09:30", "10:30", "NULL", 40)
+    db.add_class("Big Data", "Esli Heyvaert & Nathan Segers", "KWE.A.2.302", "09:30", "10:30", "NULL", 40)
     # db.add_class("Advanced Software Engineering", "Dieter De Preester", "KWE.A.1.301", "10:45", "12:45", "11:55", 40)
     # db.add_class("AI & ML", "Wouter Gevaert", "KWE.P.-1.012", "13:45", "15:45", "14:55", 60)
     # db.add_class("AI & ML", "Wouter Gevaert", "KEW.P.-1.009", "09:45", "12:45", "11:40", 60)

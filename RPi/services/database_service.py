@@ -39,20 +39,20 @@ class DatabaseService:
     def query_all_measurements(self) -> list:
         return self._repository.query_all_measurements()
     
-    def remove_measurement(self):
-        print("Select measurement to remove:\n")
-        print("Id, ClassId, PeopleIn, PeopleOut, Time, Date")
-        for measurement in self.query_all_measurements():
-            print(measurement)
-        measurement_id = int(input("Enter the measurement id:"))
+    def remove_measurement(self, measurement_id):
+        # print("Select measurement to remove:\n")
+        # print("Id, ClassId, PeopleIn, PeopleOut, Time, Date")
+        # for measurement in self.query_all_measurements():
+        #     print(measurement)
+        # measurement_id = int(input("Enter the measurement id:"))
         self._repository.remove_measurement(measurement_id)
     
-    def remove_class(self):
-        print("Select class id:\n")
-        print("ClassId, Subject, Teacher, RoomNo, StartTime, EndTime, BreakEndTime, NumberOfStudents")
-        for subject in self.query_all_classes():
-            print(subject)
-        class_id = int(input("Enter the class id:"))
+    def remove_class(self, class_id):
+        # print("Select class id:\n")
+        # print("ClassId, Subject, Teacher, RoomNo, StartTime, EndTime, BreakEndTime, NumberOfStudents")
+        # for subject in self.query_all_classes():
+        #     print(subject)
+        # class_id = int(input("Enter the class id:"))
         self._repository.remove_class(class_id)
     
     def get_coordinates(self):
