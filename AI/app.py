@@ -104,36 +104,36 @@ def track_heads(all_box_coords, ht: HeadTracker): # Draws centroids of each boun
                     # If it's between the lines end points (horizontally)
                     if (predicted_centroid[0] > min(start_counter_line[0], end_counter_line[0])) and (predicted_centroid[0] < max(start_counter_line[0], end_counter_line[0])):
                         # If it's below or on the counter line (vertically), and used to be above it
-                        if objectID not in crossing_counter.keys() or crossing_counter[objectID] == None:
-                            if predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point:
-                                crossing_counter[objectID] = 0
-                                print(crossing_counter)
-                                # number_of_people += 1
-                                # people_in += 1
-                            # If it's above or on the counter line (vertically), and used to be below it
-                            elif predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point:
-                                crossing_counter[objectID] = 0
-                                print(crossing_counter)
-                                # if number_of_people != 0:
-                                #     number_of_people -= 1
-                                #     people_out += 1
-                        else:
-                            #if                 a head is above the counter line        and used to be above it                                           or    vice versa
-                            if (predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point) or (predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point):
-                                crossing_counter[objectID] += 1
-                                print(crossing_counter)
-                                if crossing_counter[objectID] >= frame_threshold:
-                                    if predicted_centroid[1] >= counter_line_middle_point:
-                                        number_of_people += 1
-                                        people_in += 1
-                                        crossing_counter[objectID] = None
-                                    else:
-                                        if number_of_people != 0:
-                                            number_of_people -= 1
-                                        people_out += 1
-                                        crossing_counter[objectID] = None
-                            else:
-                                crossing_counter[objectID] = None# otherwise reset
+                        # if objectID not in crossing_counter.keys() or crossing_counter[objectID] == None:
+                        if predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point:
+                            # crossing_counter[objectID] = 0
+                            # print(crossing_counter)
+                            number_of_people += 1
+                            people_in += 1
+                        # If it's above or on the counter line (vertically), and used to be below it
+                        elif predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point:
+                            # crossing_counter[objectID] = 0
+                            # print(crossing_counter)
+                            if number_of_people != 0:
+                                number_of_people -= 1
+                                people_out += 1
+                    # if crossing_counter[objectID] >= 0:
+                    #         #if                 a head is above the counter line        and used to be above it                                           or    vice versa
+                    #     if (predicted_centroid[1] >= counter_line_middle_point and previous_centroid_coords[objectID][1] > counter_line_middle_point) or (predicted_centroid[1] <= counter_line_middle_point and previous_centroid_coords[objectID][1] < counter_line_middle_point):
+                    #         crossing_counter[objectID] += 1
+                    #         print(crossing_counter)
+                    #         if crossing_counter[objectID] >= frame_threshold:
+                    #             if predicted_centroid[1] >= counter_line_middle_point:
+                    #                 number_of_people += 1
+                    #                 people_in += 1
+                    #                 crossing_counter[objectID] = None
+                    #             else:
+                    #                 if number_of_people != 0:
+                    #                     number_of_people -= 1
+                    #                 people_out += 1
+                    #                 crossing_counter[objectID] = None
+                    #     # else:
+                    #     #     crossing_counter[objectID] = None # otherwise reset
                 except Exception:
                     continue
 
