@@ -7,8 +7,8 @@ import numpy as np
 
 class DatabaseRepository():
     def __init__(self) -> None:
-        self.path_to_db = r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/databases/occupation_meter.db"
-        # self.path_to_db = r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\RPi\databases\occupation_meter.db"
+        # self.path_to_db = r"/home/user/Desktop/2023-2024-projectone-ctai-ApinisAtvars/RPi/databases/occupation_meter.db"
+        self.path_to_db = r"D:\Project 1\2023-2024-projectone-ctai-ApinisAtvars\RPi\databases\occupation_meter.db"
         self.con = sqlite3.connect(database=self.path_to_db)
         
         self.cur = self.con.cursor() # Create Cursor
