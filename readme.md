@@ -21,3 +21,6 @@ What I implemented:
 2. SQLite database running on a Raspberry Pi to store the number of people in the room.
 3. Streamlit app that lets the user visualize the data gathered by the model.
 
+## 📺 Watch a short Youtube video of me explaining the project! 📺
+
+The video is available [here](https://youtu.be/yvxvLyllrQA)!
