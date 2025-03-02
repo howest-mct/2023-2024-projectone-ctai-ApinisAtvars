@@ -1,5 +1,5 @@
 # 🎥 AI Powered Classroom Occupation Meter 🎥
----
+
 **FIRST & LAST NAME:** Atvars Apinis
 
 **Sparring Partner:** Viola Nguyen
@@ -9,7 +9,7 @@
 **Project Title:** AI Powered Classroom Occupation Meter
 
 ## ❓What is it?
----
+
 This is my first year's project in the bachelor Creative Tech & AI.
 
 The project had a few requirements:
